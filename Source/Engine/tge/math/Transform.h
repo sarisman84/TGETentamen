@@ -115,6 +115,12 @@ public:
 		Matrix4x4f Matrix = GetMatrix(true).GetInverse();
 		return TransformVector4(Vector4f(someVector, 1.0f), Matrix).ToVector3();
 	}
+
+
+	public: //Custom
+		inline Vector3f& Position() { return myPosition; }
+		inline Vector3f& Rotation() { return myRotation; }
+		inline Vector3f& Scale() { myScale; }
 };
 
 } // namespace Tga

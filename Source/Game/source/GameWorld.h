@@ -1,4 +1,5 @@
 #pragma once
+#include "Space Invaders/Scene.h"
 
 class GameWorld
 {
@@ -12,4 +13,7 @@ public:
 private:
 	Tga::Sprite2DInstanceData myTGELogoInstance = {};
 	Tga::SpriteSharedData sharedData = {};
+
+private: //Space Invaders
+	si::Scene myTestScene;
 };

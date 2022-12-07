@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\Source\Game\source\GameWorld.cpp" />
+    <ClCompile Include="..\Source\Game\source\main.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\Scene.cpp">
+      <Filter>Space Invaders</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Game\source\GameWorld.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Scene.h">
+      <Filter>Space Invaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Entity.h">
+      <Filter>Space Invaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Component.h">
+      <Filter>Space Invaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\rendering\Sprite.h">
+      <Filter>Space Invaders\Rendering</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Space Invaders">
+      <UniqueIdentifier>{514f2d9e-ffe9-44f3-b381-5e7ca6119ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Space Invaders\Rendering">
+      <UniqueIdentifier>{07785e4d-f882-4d20-8ec8-9b5efbed8b5b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

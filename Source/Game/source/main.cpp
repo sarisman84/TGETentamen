@@ -51,7 +51,7 @@ void InitCallBack()
 	createParameters.myStartInFullScreen = false;
 	createParameters.myPreferedMultiSamplingQuality = Tga::MultiSamplingQuality::High;
 
-	createParameters.myApplicationName = L"TGE Game";
+	createParameters.myApplicationName = L"Space Invaders (v0.1.a)";
 	createParameters.myEnableVSync = true;
 }
 

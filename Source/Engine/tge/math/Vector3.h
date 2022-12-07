@@ -40,6 +40,17 @@ namespace Tga
 		Vector3<T>(Vector3<T>&& aVector3) = default;
 		Vector3<T>& operator=(const Vector3<T>& aVector3) = default;
 		Vector3<T>& operator=(Vector3<T>&& aVector3) = default;
+
+#pragma region Custom Member Declarations/Definitions
+		Vector3<T>& operator=(const Vector2<T>& aVector2)
+		{
+			X = aVector2.X;
+			Y = aVector2.Y;
+			return *this;
+		}
+#pragma endregion
+
+
 		//Creates a vector (aX, aY, aZ)
 		Vector3<T>(const Vector4<T>& aVector4);
 		Vector3<T>(const Vector2<T>& aXY, const T& aZ);
@@ -87,6 +98,7 @@ namespace Tga
 	template <class T> std::istream& operator>>(std::istream& in, Vector3<T>& aVec);
 	template <class T> std::ostream& operator>>(std::ostream& out, const Vector3<T>& aVec);
 	template <class T> bool operator<(const Vector3<T>& aVector0, const Vector3<T>& aVector1);
+
 #pragma region MemberDefinitions
 
 	template<class T>
@@ -350,6 +362,7 @@ namespace Tga
 	//	return { 0, 1, 0 };
 	//}
 #pragma endregion Static Functions
+
 
 	template<typename T>
 	const Vector3<T> Vector3<T>::Zero(0, 0, 0);

@@ -10,10 +10,10 @@
 GameWorld::GameWorld()
 {}
 
-GameWorld::~GameWorld() 
+GameWorld::~GameWorld()
 {}
 
-void GameWorld::Init()  
+void GameWorld::Init()
 {
 	auto& engine = *Tga::Engine::GetInstance();
 
@@ -27,28 +27,42 @@ void GameWorld::Init()
 		myTGELogoInstance.mySize = Tga::Vector2f{ 0.75f, 0.75f }*resolution.y;
 		myTGELogoInstance.myColor = Tga::Color(1, 1, 1, 1);
 	}
+
+	myTestScene.Init();
+
+
+	auto entity = si::Entity();
+	auto pos = Tga::Vector2f{ 0.25f, 0.5f }*resolution;
+	entity.myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
+	myTestScene += entity;
+
+	
+
 }
 void GameWorld::Update(float aTimeDelta)
 {
 	UNREFERENCED_PARAMETER(aTimeDelta);
-
+	myTestScene.Update(aTimeDelta);
 }
 
 void GameWorld::Render()
 {
-	auto &engine = *Tga::Engine::GetInstance();
-	Tga::SpriteDrawer& spriteDrawer(engine.GetGraphicsEngine().GetSpriteDrawer());
-	// Game update
-	{
-		spriteDrawer.Draw(sharedData, myTGELogoInstance);
-	}
+	myTestScene.Render();
 
-	// Debug draw pivot
-#ifndef _RETAIL
-	{
-		Tga::DebugDrawer& dbg = engine.GetDebugDrawer();
-		Tga::Color c1 = myTGELogoInstance.myColor;
-		dbg.DrawCircle(myTGELogoInstance.myPosition, 5.f, (c1.myR + c1.myG + c1.myB) / 3 > 0.3f ? Tga::Color(0, 0, 0, 1) : Tga::Color(1, 1, 1, 1));
-	}
-#endif
+
+//	auto& engine = *Tga::Engine::GetInstance();
+//	Tga::SpriteDrawer& spriteDrawer(engine.GetGraphicsEngine().GetSpriteDrawer());
+//	// Game update
+//	{
+//		spriteDrawer.Draw(sharedData, myTGELogoInstance);
+//	}
+//
+//	// Debug draw pivot
+//#ifndef _RETAIL
+//	{
+//		Tga::DebugDrawer& dbg = engine.GetDebugDrawer();
+//		Tga::Color c1 = myTGELogoInstance.myColor;
+//		dbg.DrawCircle(myTGELogoInstance.myPosition, 5.f, (c1.myR + c1.myG + c1.myB) / 3 > 0.3f ? Tga::Color(0, 0, 0, 1) : Tga::Color(1, 1, 1, 1));
+//	}
+//#endif
 }

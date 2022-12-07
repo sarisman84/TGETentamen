@@ -152,10 +152,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Game\source\GameWorld.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Component.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Entity.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\rendering\Sprite.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Game\source\GameWorld.cpp" />
     <ClCompile Include="..\Source\Game\source\main.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="External.vcxproj">
