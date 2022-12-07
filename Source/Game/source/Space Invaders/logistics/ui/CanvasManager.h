@@ -52,9 +52,13 @@ namespace si
 	template<typename CanvasKey>
 	void ResetTo(const CanvasKey aKey)
 	{
+		static_assert(std::is_enum<CanvasKey>::value, "Test");
+
 		uint32_t id = static_cast<uint32_t>(typeid(CanvasKey).hash_code());
 		uint32_t key = static_cast<uint32_t>(aKey);
 		si::ResetTo(id + key);
 	}
 
 }
+
+

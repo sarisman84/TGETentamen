@@ -29,6 +29,9 @@ void si::InputController::Update(const float /*aDT*/)
 	if (GetAsyncKeyState((int)Key::D))
 		myActor->myVelocity = Tga::Vector2f{ 1.0f, 0.0f } *myMovementSpeed;
 
+	if (GetAsyncKeyState((int)Key::Space))
+		WeaponSystem::Fire({});
+
 	auto pos = myActor->GetNextPosition();
 	auto size = myEntity->myTransform.Scale() / 2.0f;
 

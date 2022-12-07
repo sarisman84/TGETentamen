@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Component.h"
+#include "../../logistics/WeaponSystem.h"
 #include <wtypes.h>
 
 namespace si
@@ -22,8 +23,12 @@ namespace si
 	public:
 		void Init() override;
 		void Update(const float aDT) override;
-	private:
+	private: //Movement
 		Actor* myActor;
 		float myMovementSpeed;
+	private: //Weapon Logic
+		float myFireRate = 0.25f;
+		Bullet myBulletInfo;
+		
 	};
 }

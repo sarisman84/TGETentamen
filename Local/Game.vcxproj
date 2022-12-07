@@ -156,6 +156,9 @@
     <ClInclude Include="..\Source\Game\source\Space Invaders\actors\controllers\InputController.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\Component.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\Entity.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\ui\CanvasManager.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\rendering\Sprite.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\Scene.h" />
   </ItemGroup>
@@ -164,6 +167,9 @@
     <ClCompile Include="..\Source\Game\source\main.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\actors\Actor.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\actors\controllers\InputController.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\CanvasManager.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -48,9 +48,23 @@ void si::ResetTo(const uint32_t anID)
 
 void si::UpdateCanvasStack(const float aDT)
 {
+	auto cpy = updateStack;
+
+	while (!cpy.empty())
+	{
+		canvases[cpy.top()]->OnUpdate(aDT);
+		cpy.pop();
+	}
 }
 
 void si::RenderCanvasStack()
 {
+	auto cpy = renderStack;
+
+	while (!cpy.empty())
+	{
+		canvases[cpy.top()]->Render();
+		cpy.pop();
+	}
 }
 

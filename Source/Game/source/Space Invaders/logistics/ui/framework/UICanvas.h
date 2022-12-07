@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 namespace si
 {
@@ -9,5 +10,9 @@ namespace si
 		virtual void OnUpdate(const float /*aDT*/) {};
 		virtual void OnTransitionEnter() {};
 		virtual void OnTransitionExit() {};
+	private:
+		friend void RenderCanvasStack();
+		void Render();
+		std::vector<uint32_t> myUIElements;
 	};
 }
