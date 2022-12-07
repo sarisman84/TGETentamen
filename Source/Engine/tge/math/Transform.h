@@ -120,7 +120,7 @@ public:
 	public: //Custom
 		inline Vector3f& Position() { return myPosition; }
 		inline Vector3f& Rotation() { return myRotation; }
-		inline Vector3f& Scale() { myScale; }
+		inline Vector3f& Scale() { return myScale; }
 };
 
 } // namespace Tga

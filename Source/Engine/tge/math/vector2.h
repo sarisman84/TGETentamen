@@ -64,8 +64,8 @@ namespace Tga
 	template <class T> Vector2<T> operator*(const Vector2<T>& aVector, const T& aScalar);
 	template <class T> Vector2<T> operator*(const T& aScalar, const Vector2<T>& aVector);
 	template <class T> Vector2<T> operator/(const Vector2<T>& aVector, const T& aScalar);
-	template <class T> Vector2<T> operator/(const Vector2<T>& aVector, const int& aScalar);
-	template <class T> Vector2<T> operator/(const Vector2<T>& aVector, const float& aScalar);
+	//template <class T> Vector2<T> operator/(const Vector2<T>& aVector, const int& aScalar);
+	//template <class T> Vector2<T> operator/(const Vector2<T>& aVector, const float& aScalar);
 	template <class T> Vector2<T> operator/(const Vector2<T>& aVector0, const Vector2<T>& aVector1);
 	template <class T> bool operator==(const Vector2<T>& aVector0, const Vector2<T>& aVector1);
 
@@ -194,20 +194,20 @@ namespace Tga
 	template <class T>
 	Vector2<T> operator/(const Vector2<T>& aVector, const T& aScalar)
 	{
-		return aVector * (1 / aScalar);
+		return {aVector.x / aScalar, aVector.y / aScalar};
 	}
 
-	template <class T>
-	Vector2<T> operator/(const Vector2<T>& aVector, const int& aScalar)
-	{
-		return { aVector.X / static_cast<T>(aScalar), aVector.Y / static_cast<T>(aScalar) };
-	}
+	//template <class T>
+	//Vector2<T> operator/(const Vector2<T>& aVector, const int& aScalar)
+	//{
+	//	return { aVector.X / static_cast<T>(aScalar), aVector.Y / static_cast<T>(aScalar) };
+	//}
 
-	template <class T>
-	Vector2<T> operator/(const Vector2<T>& aVector, const float& aScalar)
-	{
-		return { aVector.X / static_cast<T>(aScalar), aVector.Y / static_cast<T>(aScalar) };
-	}
+	//template <class T>
+	//Vector2<T> operator/(const Vector2<T>& aVector, const float& aScalar)
+	//{
+	//	return { aVector.X / static_cast<T>(aScalar), aVector.Y / static_cast<T>(aScalar) };
+	//}
 
 	template<class T>
 	Vector2<T> operator/(const Vector2<T>& aVector0, const Vector2<T>& aVector1)

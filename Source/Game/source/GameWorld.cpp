@@ -7,6 +7,9 @@
 #include <tge/drawers/DebugDrawer.h>
 
 
+#include "Space Invaders/actors/controllers/InputController.h"
+
+
 GameWorld::GameWorld()
 {}
 
@@ -30,13 +33,33 @@ void GameWorld::Init()
 
 	myTestScene.Init();
 
+	{
+		auto background = new si::Entity();
+		auto pos = Tga::Vector2f{ 0.5f, 0.5f }*resolution;
+		background->myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
+		background->mySprite.mySpritePath = L"textures/background.dds";
+		background->mySprite.mySizeOffset = { 255.0f, 255.0f };
+		myTestScene += background;
+	}
 
-	auto entity = si::Entity();
-	auto pos = Tga::Vector2f{ 0.25f, 0.5f }*resolution;
-	entity.myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
-	myTestScene += entity;
+
+	{
+		auto entity = new si::Entity();
+		auto pos = Tga::Vector2f{ 0.5f, 0.1f }*resolution;
+		entity->myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
+		entity->AddComponent<si::InputController>();
+		entity->mySprite.mySpritePath = L"textures/player.dds";
+		myTestScene += entity;
+	}
+
 
 	
+
+
+
+
+
+
 
 }
 void GameWorld::Update(float aTimeDelta)
@@ -50,19 +73,19 @@ void GameWorld::Render()
 	myTestScene.Render();
 
 
-//	auto& engine = *Tga::Engine::GetInstance();
-//	Tga::SpriteDrawer& spriteDrawer(engine.GetGraphicsEngine().GetSpriteDrawer());
-//	// Game update
-//	{
-//		spriteDrawer.Draw(sharedData, myTGELogoInstance);
-//	}
-//
-//	// Debug draw pivot
-//#ifndef _RETAIL
-//	{
-//		Tga::DebugDrawer& dbg = engine.GetDebugDrawer();
-//		Tga::Color c1 = myTGELogoInstance.myColor;
-//		dbg.DrawCircle(myTGELogoInstance.myPosition, 5.f, (c1.myR + c1.myG + c1.myB) / 3 > 0.3f ? Tga::Color(0, 0, 0, 1) : Tga::Color(1, 1, 1, 1));
-//	}
-//#endif
+	//	auto& engine = *Tga::Engine::GetInstance();
+	//	Tga::SpriteDrawer& spriteDrawer(engine.GetGraphicsEngine().GetSpriteDrawer());
+	//	// Game update
+	//	{
+	//		spriteDrawer.Draw(sharedData, myTGELogoInstance);
+	//	}
+	//
+	//	// Debug draw pivot
+	//#ifndef _RETAIL
+	//	{
+	//		Tga::DebugDrawer& dbg = engine.GetDebugDrawer();
+	//		Tga::Color c1 = myTGELogoInstance.myColor;
+	//		dbg.DrawCircle(myTGELogoInstance.myPosition, 5.f, (c1.myR + c1.myG + c1.myB) / 3 > 0.3f ? Tga::Color(0, 0, 0, 1) : Tga::Color(1, 1, 1, 1));
+	//	}
+	//#endif
 }

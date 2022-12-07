@@ -6,6 +6,12 @@
     <ClCompile Include="..\Source\Game\source\Space Invaders\Scene.cpp">
       <Filter>Space Invaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\actors\Actor.cpp">
+      <Filter>Space Invaders\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\actors\controllers\InputController.cpp">
+      <Filter>Space Invaders\Actors\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Game\source\GameWorld.h" />
@@ -21,6 +27,12 @@
     <ClInclude Include="..\Source\Game\source\Space Invaders\rendering\Sprite.h">
       <Filter>Space Invaders\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\actors\Actor.h">
+      <Filter>Space Invaders\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\actors\controllers\InputController.h">
+      <Filter>Space Invaders\Actors\Controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Space Invaders">
@@ -28,6 +40,12 @@
     </Filter>
     <Filter Include="Space Invaders\Rendering">
       <UniqueIdentifier>{07785e4d-f882-4d20-8ec8-9b5efbed8b5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Space Invaders\Actors">
+      <UniqueIdentifier>{b322e611-c770-45b3-8e0b-34c5faf2bbc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Space Invaders\Actors\Controllers">
+      <UniqueIdentifier>{d461abda-4600-4687-9933-2699e8f7ea93}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

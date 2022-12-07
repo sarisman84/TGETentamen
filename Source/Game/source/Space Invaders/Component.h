@@ -7,10 +7,11 @@ namespace si
 
 	class Component
 	{
+		friend Entity;
 	public:
 		virtual void Init() {};
 		virtual void Update(const float /*aDT*/) {};
 	protected:
-		Entity* myEntity;
+		Entity* myEntity = nullptr;
 	};
 }

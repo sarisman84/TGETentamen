@@ -24,8 +24,8 @@ void si::Scene::Init()
 
 	for (size_t i = 0; i < myEntities.size(); i++)
 	{
-		ExecuteComponent(myEntities[i].GetComponents(), [](const float /*aDT*/, Component* aComponent) { aComponent->Init(); });
-		myVisualEntities[i].myTexture = textureManager.GetTexture(myEntities[i].mySprite.mySpritePath);
+		ExecuteComponent(myEntities[i]->GetComponents(), [](const float /*aDT*/, Component* aComponent) { aComponent->Init(); });
+		myVisualEntities[i].myTexture = textureManager.GetTexture(myEntities[i]->mySprite.mySpritePath);
 	}
 }
 
@@ -33,7 +33,7 @@ void si::Scene::Update(const float aDT)
 {
 	for (size_t i = 0; i < myEntities.size(); i++)
 	{
-		ExecuteComponent(myEntities[i].GetComponents(), [](const float aDT, Component* aComponent) { aComponent->Update(aDT); }, aDT);
+		ExecuteComponent(myEntities[i]->GetComponents(), [](const float aDT, Component* aComponent) { aComponent->Update(aDT); }, aDT);
 	}
 }
 
@@ -42,12 +42,13 @@ void si::Scene::Render()
 	for (size_t i = 0; i < myVisualEntities.size(); i++)
 	{
 		Tga::Sprite2DInstanceData data = {};
-		auto pos = myEntities[i].myTransform.GetPosition();
+		auto pos = myEntities[i]->myTransform.GetPosition();
 		auto size = myVisualEntities[i].myTexture->CalculateTextureSize();
 		data.myPosition = Tga::Vector2f{ pos.x, pos.y };
-		data.myPivot = myEntities[i].mySprite.myPivot;
-		data.mySize = myEntities[i].mySprite.mySizeOffset + Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) };
-		data.myColor = Tga::Color(1, 1, 1, 1);
+		myEntities[i]->mySprite.mySize = Tga::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
+		data.myPivot = myEntities[i]->mySprite.myPivot;
+		data.mySize = myEntities[i]->mySprite.mySizeOffset + Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) };
+		data.myColor = myEntities[i]->mySprite.myColor;
 
 		myRenderer->Draw(myVisualEntities[i], data);
 	}
@@ -65,19 +66,22 @@ void si::Scene::ExecuteComponent(const std::vector<std::shared_ptr<Component>> s
 
 
 
-void si::Scene::operator +=(const Entity& anEntity)
+void si::Scene::operator +=(Entity* const anEntity)
 {
-	myEntities.push_back(anEntity);
-	si::Entity& newEntity = myEntities.back();
+	myEntities.push_back(std::shared_ptr<Entity>(anEntity));
+	si::Entity& newEntity = *myEntities.back();
 
 	Tga::SpriteSharedData sharedData = {};
 	sharedData.myTexture = myEngine->GetTextureManager().GetTexture(newEntity.mySprite.mySpritePath);
 	myVisualEntities.push_back(sharedData);
 
-	ExecuteComponent(newEntity.GetComponents(), [](const float /*aDT*/, Component* aComponent) { aComponent->Init(); });
+	ExecuteComponent(newEntity.GetComponents(), [](const float /*aDT*/, Component* aComponent) 
+		{ 
+			aComponent->Init(); 
+		});
 }
 
-void si::Scene::operator +=(const std::initializer_list<Entity>& aList)
+void si::Scene::operator +=(const std::initializer_list<Entity*>& aList)
 {
 	for (auto& e : aList)
 	{

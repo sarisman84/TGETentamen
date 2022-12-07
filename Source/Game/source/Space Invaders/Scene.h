@@ -27,13 +27,13 @@ namespace si
 		void Render();
 
 	public: //Helper Logic/Operations
-		void operator +=(const Entity& anEntity);
-		void operator +=(const std::initializer_list<Entity>& aList);
+		void operator +=(Entity* const anEntity);
+		void operator +=(const std::initializer_list<Entity*>& aList);
 	private:
 		void ExecuteComponent(const std::vector<std::shared_ptr<Component>> someComponents, void(*anOnComponentExecute)(const float,Component*), const float aDT = 0);
 
 	private: //Entity Containers
-		std::vector<Entity> myEntities;
+		std::vector<std::shared_ptr<Entity>> myEntities;
 		std::vector<Tga::SpriteSharedData> myVisualEntities;
 
 	private: //Logistics
