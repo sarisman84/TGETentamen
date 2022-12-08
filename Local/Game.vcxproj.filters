@@ -15,8 +15,24 @@
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\CanvasManager.cpp">
       <Filter>Space Invaders\Logistics\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.cpp" />
-    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\actors\controllers\BulletController.cpp">
+      <Filter>Space Invaders\Actors\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\Entity.cpp">
+      <Filter>Space Invaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.cpp">
+      <Filter>Space Invaders\Logistics\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.cpp">
+      <Filter>Space Invaders\Logistics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\collision\CollisionManager.cpp">
+      <Filter>Space Invaders\Logistics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\collision\Collider.cpp">
+      <Filter>Space Invaders\Logistics\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Game\source\GameWorld.h" />
@@ -47,6 +63,15 @@
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.h">
       <Filter>Space Invaders\Logistics</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\actors\controllers\BulletController.h">
+      <Filter>Space Invaders\Actors\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\collision\Collider.h">
+      <Filter>Space Invaders\Logistics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\collision\CollisionManager.h">
+      <Filter>Space Invaders\Logistics\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Space Invaders">
@@ -69,6 +94,9 @@
     </Filter>
     <Filter Include="Space Invaders\Logistics\UI\Framework">
       <UniqueIdentifier>{de221fad-70c3-4aab-82e0-715c8688a2e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Space Invaders\Logistics\Collision">
+      <UniqueIdentifier>{854f617c-2dd8-435a-ac6e-111b697e2395}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

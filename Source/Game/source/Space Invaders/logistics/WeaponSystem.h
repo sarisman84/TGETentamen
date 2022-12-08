@@ -5,8 +5,12 @@
 
 namespace si
 {
+	class Scene;
+
 	struct Bullet
 	{
+		uint32_t myOwnerID;
+		Tga::Vector2f mySpawnPos;
 		Tga::Vector2f myDirection;
 		float myColliderRadius;
 		float myDamage;
@@ -14,11 +18,12 @@ namespace si
 	};
 
 
-	class WeaponSystem
+	namespace WeaponSystem
 	{
-	public:
-		static const bool Fire(const Bullet& someInformation);
-	private:
+		const bool Fire(Scene* aScene, const Bullet& someInformation);
 
-	};
+	}
+
+
+
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 #include <tge/sprite/sprite.h>
@@ -14,6 +15,7 @@ namespace Tga
 
 namespace si
 {
+	class Collider;
 	class Component;
 	class Entity;
 
@@ -25,16 +27,22 @@ namespace si
 		void Init();
 		void Update(const float aDT);
 		void Render();
-
 	public: //Helper Logic/Operations
 		void operator +=(Entity* const anEntity);
 		void operator +=(const std::initializer_list<Entity*>& aList);
+
+		void MarkForDelete(const uint32_t anUUID);
+		void ClearGarbage();
+	public: //Accessors
+		std::vector<Collider*>& GetColliders() { return myColliders; }
 	private:
-		void ExecuteComponent(const std::vector<std::shared_ptr<Component>> someComponents, void(*anOnComponentExecute)(const float,Component*), const float aDT = 0);
+		void ExecuteComponent(std::vector<std::shared_ptr<Component>>& someComponents, void(*anOnComponentExecute)(const float, Component*), const float aDT = 0);
 
 	private: //Entity Containers
-		std::vector<std::shared_ptr<Entity>> myEntities;
-		std::vector<Tga::SpriteSharedData> myVisualEntities;
+		std::vector<uint32_t> myGarbageCollection;
+		std::unordered_map<uint32_t, std::shared_ptr<Entity>> myEntities;
+		std::unordered_map<uint32_t, Tga::SpriteSharedData> myVisualEntities;
+		std::vector<Collider*> myColliders;
 
 	private: //Logistics
 		Tga::SpriteDrawer* myRenderer;

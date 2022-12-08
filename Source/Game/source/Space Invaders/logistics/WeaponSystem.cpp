@@ -1,6 +1,25 @@
 #include "WeaponSystem.h"
+#include "../Scene.h"
+#include "../Entity.h"
+#include "../actors/controllers/BulletController.h"
+#include "../logistics/collision/Collider.h"
 
-const bool si::WeaponSystem::Fire(const Bullet& /*someInformation*/)
+const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 {
-    return false;
+	auto entity = new Entity();
+	entity->myTransform.Position() = someInformation.mySpawnPos;
+	entity->mySprite.mySpritePath = someInformation.myTexture;
+	auto bc = &entity->AddComponent<BulletController>();
+
+	bc->SetOwnerID(someInformation.myOwnerID);
+	bc->SetDirection(someInformation.myDirection);
+	bc->SetDamage(someInformation.myDamage);
+
+	auto col = &entity->AddComponent<Collider>();
+	col->myCollisionRadius = someInformation.myColliderRadius;
+	bc->RegisterCollider(col);
+
+	(*aScene) += entity;
+
+	return true;
 }

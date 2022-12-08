@@ -8,6 +8,7 @@
 
 
 #include "Space Invaders/actors/controllers/InputController.h"
+#include "Space Invaders/logistics/collision/CollisionManager.h"
 
 
 GameWorld::GameWorld()
@@ -66,6 +67,8 @@ void GameWorld::Update(float aTimeDelta)
 {
 	UNREFERENCED_PARAMETER(aTimeDelta);
 	myTestScene.Update(aTimeDelta);
+	si::CollisionManager::HandleCollisions(&myTestScene);
+
 }
 
 void GameWorld::Render()

@@ -17,6 +17,14 @@ namespace Tga
 		const TextureResource* myTexture = nullptr;
 		TextureResource* myMaps[MAP_MAX] = { nullptr };
 		SpriteShader* myCustomShader = nullptr;
+
+		inline const bool operator==(const SpriteSharedData& someOther)
+		{
+			return 
+				myTexture == someOther.myTexture && 
+				myMaps == someOther.myMaps && 
+				myCustomShader == someOther.myCustomShader;
+		}
 	};
 
 	struct Sprite2DInstanceData

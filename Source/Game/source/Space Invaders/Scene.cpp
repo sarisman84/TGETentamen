@@ -4,10 +4,14 @@
 
 #include <tge/graphics/GraphicsEngine.h>
 #include <tge/drawers/SpriteDrawer.h>
+#include <tge/drawers/DebugDrawer.h>
 #include <tge/texture/TextureManager.h>
 #include <tge/settings/settings.h>
 
 #include <tge/engine.h>
+
+
+#include "logistics/collision/Collider.h"
 
 
 
@@ -20,42 +24,67 @@ void si::Scene::Init()
 
 	auto& textureManager = myEngine->GetTextureManager();
 
-	myVisualEntities.resize(myEntities.size());
 
-	for (size_t i = 0; i < myEntities.size(); i++)
+	for (auto& e : myEntities)
 	{
-		ExecuteComponent(myEntities[i]->GetComponents(), [](const float /*aDT*/, Component* aComponent) { aComponent->Init(); });
-		myVisualEntities[i].myTexture = textureManager.GetTexture(myEntities[i]->mySprite.mySpritePath);
+		auto& entity = e.second;
+		ExecuteComponent(entity->GetComponents(), [](const float /*aDT*/, Component* aComponent) { aComponent->Init(); });
+		myVisualEntities[e.first].myTexture = textureManager.GetTexture(entity->mySprite.mySpritePath);
 	}
 }
 
 void si::Scene::Update(const float aDT)
 {
-	for (size_t i = 0; i < myEntities.size(); i++)
+	ClearGarbage();
+
+	auto cpy = myEntities;
+	for (auto& e : cpy)
 	{
-		ExecuteComponent(myEntities[i]->GetComponents(), [](const float aDT, Component* aComponent) { aComponent->Update(aDT); }, aDT);
+		if (!e.second->IsActive()) continue;
+		ExecuteComponent(e.second->GetComponents(), [](const float aDT, Component* aComponent) { aComponent->Update(aDT); }, aDT);
 	}
+
+
 }
 
 void si::Scene::Render()
 {
-	for (size_t i = 0; i < myVisualEntities.size(); i++)
+	auto cpy = myVisualEntities;
+	for (auto& p : cpy)
 	{
-		Tga::Sprite2DInstanceData data = {};
-		auto pos = myEntities[i]->myTransform.GetPosition();
-		auto size = myVisualEntities[i].myTexture->CalculateTextureSize();
-		data.myPosition = Tga::Vector2f{ pos.x, pos.y };
-		myEntities[i]->mySprite.mySize = Tga::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
-		data.myPivot = myEntities[i]->mySprite.myPivot;
-		data.mySize = myEntities[i]->mySprite.mySizeOffset + Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) };
-		data.myColor = myEntities[i]->mySprite.myColor;
+		if (!myEntities[p.first]->IsActive()) continue;
 
-		myRenderer->Draw(myVisualEntities[i], data);
+		auto& vE = p.second;
+
+		Tga::Sprite2DInstanceData data = {};
+		auto pos = myEntities[p.first]->myTransform.GetPosition();
+		auto size = myVisualEntities[p.first].myTexture->CalculateTextureSize();
+		data.myPosition = Tga::Vector2f{ pos.x, pos.y };
+		myEntities[p.first]->mySprite.mySize = Tga::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
+		data.myPivot = myEntities[p.first]->mySprite.myPivot;
+		data.mySize = myEntities[p.first]->mySprite.mySizeOffset + Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) };
+		data.myColor = myEntities[p.first]->mySprite.myColor;
+
+		myRenderer->Draw(vE, data);
 	}
+
+#ifndef _RETAIL
+	{
+		for (size_t i = 0; i < myColliders.size(); i++)
+		{
+			auto& collider = myColliders[i];
+			auto pos = collider->GetEntity()->myTransform.Position();
+			Tga::DebugDrawer& dbg = myEngine->GetDebugDrawer();
+			dbg.DrawCircle({ pos.x, pos.y }, collider->myCollisionRadius, collider->HasCollisionEventTriggered() ? Tga::Color(0.0f, 1.0f, 0.0f, 1.0f) : Tga::Color(0.75f, 0.75f, 0.75f, 1.0f));
+		}
+
+	}
+#endif
+
 }
 
 
-void si::Scene::ExecuteComponent(const std::vector<std::shared_ptr<Component>> someComponents, void(*anOnComponentExecute)(const float, Component*), const float aDT)
+void si::Scene::ExecuteComponent(std::vector<std::shared_ptr<Component>>& someComponents, void(*anOnComponentExecute)(const float, Component*), const float aDT)
 {
 	for (size_t i = 0; i < someComponents.size(); i++)
 	{
@@ -68,16 +97,20 @@ void si::Scene::ExecuteComponent(const std::vector<std::shared_ptr<Component>> s
 
 void si::Scene::operator +=(Entity* const anEntity)
 {
-	myEntities.push_back(std::shared_ptr<Entity>(anEntity));
-	si::Entity& newEntity = *myEntities.back();
+	uint32_t size = static_cast<uint32_t>(myEntities.size());
+	myEntities[size] = std::shared_ptr<Entity>(anEntity);
+	si::Entity& newEntity = *myEntities[size];
+	newEntity.myCurrentScene = this;
+	newEntity.myUUID = size;
+	newEntity.SetActive(true);
 
 	Tga::SpriteSharedData sharedData = {};
 	sharedData.myTexture = myEngine->GetTextureManager().GetTexture(newEntity.mySprite.mySpritePath);
-	myVisualEntities.push_back(sharedData);
+	myVisualEntities[size] = sharedData;
 
-	ExecuteComponent(newEntity.GetComponents(), [](const float /*aDT*/, Component* aComponent) 
-		{ 
-			aComponent->Init(); 
+	ExecuteComponent(newEntity.GetComponents(), [](const float /*aDT*/, Component* aComponent)
+		{
+			aComponent->Awake();
 		});
 }
 
@@ -87,4 +120,37 @@ void si::Scene::operator +=(const std::initializer_list<Entity*>& aList)
 	{
 		(*this) += e;
 	}
+}
+
+void si::Scene::MarkForDelete(const uint32_t anUUID)
+{
+	myGarbageCollection.push_back(anUUID);
+}
+
+#include <iostream>
+
+void si::Scene::ClearGarbage()
+{
+	for (size_t i = 0; i < myGarbageCollection.size(); i++)
+	{
+
+
+		auto index = myGarbageCollection[i];
+
+		auto& elm = myEntities[index];
+
+		ExecuteComponent(elm->GetComponents(), [](const float /*aDT*/, Component* aComp)
+			{
+				aComp->OnDestroy();
+
+			});
+
+		myEntities.erase(index);
+		myVisualEntities.erase(index);
+
+
+		std::cout << "[GARBAGE_COLLECTOR]: Cleared entity " << index << "!\n";
+	}
+
+	myGarbageCollection.clear();
 }

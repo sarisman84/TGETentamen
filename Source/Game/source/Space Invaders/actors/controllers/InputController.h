@@ -21,13 +21,14 @@ namespace si
 	class InputController : public Component
 	{
 	public:
-		void Init() override;
+		void Awake() override;
 		void Update(const float aDT) override;
 	private: //Movement
 		Actor* myActor;
 		float myMovementSpeed;
 	private: //Weapon Logic
 		float myFireRate = 0.25f;
+		float myCurFireRate = 0.0f;
 		Bullet myBulletInfo;
 		
 	};

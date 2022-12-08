@@ -2,25 +2,36 @@
 #include "../../Entity.h"
 
 #include "../Actor.h"
+#include "../../logistics/collision/Collider.h"
 
 #include <tge/engine.h>
 
 #include <iostream>
 #include <WinUser.h>
 
-void si::InputController::Init()
+void si::InputController::Awake()
 {
 	myActor = &myEntity->AddComponent<Actor>();
+	auto& col = myEntity->AddComponent<Collider>();
+	col.myCollisionRadius = 45.0f;
 	myMovementSpeed = 500.0f;
 
 	myEntity->myTransform.Scale() = { 150.0f, 150.0f };
 
+
+	myBulletInfo.myColliderRadius = 10.0f;
+	myBulletInfo.myDirection = { 0.0f, 150.0f };
+	myBulletInfo.myDamage = 5.0f;
+	myBulletInfo.myTexture = L"textures/shot1.dds";
+	myBulletInfo.myOwnerID = myEntity->GetUUID();
+	myFireRate = 0.75f;
+
+
 }
 
-void si::InputController::Update(const float /*aDT*/)
+void si::InputController::Update(const float aDT)
 {
-	std::cout << "\r" << (myActor->IsInRenderView() ? "Can see Actor" : "Cannot see Actor") << std::flush;
-
+	myCurFireRate += aDT;
 	myActor->myVelocity = Tga::Vector2f{ 0.0f, 0.0f };
 
 
@@ -29,8 +40,14 @@ void si::InputController::Update(const float /*aDT*/)
 	if (GetAsyncKeyState((int)Key::D))
 		myActor->myVelocity = Tga::Vector2f{ 1.0f, 0.0f } *myMovementSpeed;
 
-	if (GetAsyncKeyState((int)Key::Space))
-		WeaponSystem::Fire({});
+	if (GetAsyncKeyState((int)Key::Space) && myCurFireRate >= myFireRate)
+	{
+		auto pos = myEntity->myTransform.Position();
+		myBulletInfo.mySpawnPos = { pos.x, pos.y };
+ 		WeaponSystem::Fire(myEntity->myCurrentScene, myBulletInfo);
+		myCurFireRate = 0;
+	}
+
 
 	auto pos = myActor->GetNextPosition();
 	auto size = myEntity->myTransform.Scale() / 2.0f;
