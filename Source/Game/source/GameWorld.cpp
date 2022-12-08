@@ -38,7 +38,7 @@ void GameWorld::Init()
 		auto background = new si::Entity();
 		auto pos = Tga::Vector2f{ 0.5f, 0.5f }*resolution;
 		background->myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
-		background->mySprite.mySpritePath = L"textures/background.dds";
+		background->mySprite.mySpritePath = L"Textures/textures/background.dds";
 		background->mySprite.mySizeOffset = { 255.0f, 255.0f };
 		myTestScene += background;
 	}
@@ -49,7 +49,7 @@ void GameWorld::Init()
 		auto pos = Tga::Vector2f{ 0.5f, 0.1f }*resolution;
 		entity->myTransform.Position() = Tga::Vector3f(pos.x, pos.y, 0);
 		entity->AddComponent<si::InputController>();
-		entity->mySprite.mySpritePath = L"textures/player.dds";
+		entity->mySprite.mySpritePath = L"Textures/textures/player.dds";
 		myTestScene += entity;
 	}
 

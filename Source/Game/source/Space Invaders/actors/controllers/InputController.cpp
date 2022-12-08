@@ -26,7 +26,7 @@ void si::InputController::Awake()
 	myBulletInfo.myColliderRadius = 10.0f;
 	myBulletInfo.myDirection = { 0.0f, 150.0f };
 	myBulletInfo.myDamage = 1.0f;
-	myBulletInfo.myTexture = L"textures/shot1.dds";
+	myBulletInfo.myTexture = L"Textures/textures/shot1.dds";
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
 	myFireRate = 0.75f;
 
