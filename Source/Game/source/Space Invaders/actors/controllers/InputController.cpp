@@ -3,7 +3,7 @@
 
 #include "../Actor.h"
 #include "../../logistics/collision/Collider.h"
-
+#include "../../logistics/interaction/HealthInteractor.h"
 #include <tge/engine.h>
 
 #include <iostream>
@@ -13,6 +13,10 @@ void si::InputController::Awake()
 {
 	myActor = &myEntity->AddComponent<Actor>();
 	auto& col = myEntity->AddComponent<Collider>();
+	auto& hi = myEntity->AddComponent< HealthInteractor>();
+
+	hi.SetHealth(1);
+
 	col.myCollisionRadius = 45.0f;
 	myMovementSpeed = 500.0f;
 
@@ -21,7 +25,7 @@ void si::InputController::Awake()
 
 	myBulletInfo.myColliderRadius = 10.0f;
 	myBulletInfo.myDirection = { 0.0f, 150.0f };
-	myBulletInfo.myDamage = 5.0f;
+	myBulletInfo.myDamage = 1.0f;
 	myBulletInfo.myTexture = L"textures/shot1.dds";
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
 	myFireRate = 0.75f;
@@ -44,7 +48,7 @@ void si::InputController::Update(const float aDT)
 	{
 		auto pos = myEntity->myTransform.Position();
 		myBulletInfo.mySpawnPos = { pos.x, pos.y };
- 		WeaponSystem::Fire(myEntity->myCurrentScene, myBulletInfo);
+		WeaponSystem::Fire(myEntity->myCurrentScene, myBulletInfo);
 		myCurFireRate = 0;
 	}
 

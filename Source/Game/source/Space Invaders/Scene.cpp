@@ -70,9 +70,10 @@ void si::Scene::Render()
 
 #ifndef _RETAIL
 	{
-		for (size_t i = 0; i < myColliders.size(); i++)
+
+		for (auto& pair : myColliders)
 		{
-			auto& collider = myColliders[i];
+			auto& collider = pair.second;
 			auto pos = collider->GetEntity()->myTransform.Position();
 			Tga::DebugDrawer& dbg = myEngine->GetDebugDrawer();
 			dbg.DrawCircle({ pos.x, pos.y }, collider->myCollisionRadius, collider->HasCollisionEventTriggered() ? Tga::Color(0.0f, 1.0f, 0.0f, 1.0f) : Tga::Color(0.75f, 0.75f, 0.75f, 1.0f));
@@ -97,16 +98,17 @@ void si::Scene::ExecuteComponent(std::vector<std::shared_ptr<Component>>& someCo
 
 void si::Scene::operator +=(Entity* const anEntity)
 {
-	uint32_t size = static_cast<uint32_t>(myEntities.size());
-	myEntities[size] = std::shared_ptr<Entity>(anEntity);
-	si::Entity& newEntity = *myEntities[size];
+	uint32_t id = static_cast<uint32_t>(rand());
+
+	myEntities[id] = std::shared_ptr<Entity>(anEntity);
+	si::Entity& newEntity = *myEntities[id];
 	newEntity.myCurrentScene = this;
-	newEntity.myUUID = size;
+	newEntity.myUUID = id;
 	newEntity.SetActive(true);
 
 	Tga::SpriteSharedData sharedData = {};
 	sharedData.myTexture = myEngine->GetTextureManager().GetTexture(newEntity.mySprite.mySpritePath);
-	myVisualEntities[size] = sharedData;
+	myVisualEntities[id] = sharedData;
 
 	ExecuteComponent(newEntity.GetComponents(), [](const float /*aDT*/, Component* aComponent)
 		{
@@ -127,7 +129,9 @@ void si::Scene::MarkForDelete(const uint32_t anUUID)
 	myGarbageCollection.push_back(anUUID);
 }
 
+#ifndef _RETAIL
 #include <iostream>
+#endif
 
 void si::Scene::ClearGarbage()
 {
@@ -147,9 +151,11 @@ void si::Scene::ClearGarbage()
 
 		myEntities.erase(index);
 		myVisualEntities.erase(index);
+		myColliders.erase(index);
 
-
-		std::cout << "[GARBAGE_COLLECTOR]: Cleared entity " << index << "!\n";
+#ifndef _RETAIL
+		std::cout << "[LOG][Scene::GarbageCollector]: Cleared entity " << index << "!\n";
+#endif
 	}
 
 	myGarbageCollection.clear();

@@ -159,6 +159,7 @@
     <ClInclude Include="..\Source\Game\source\Space Invaders\Entity.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\collision\Collider.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\collision\CollisionManager.h" />
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\interaction\HealthInteractor.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\ui\CanvasManager.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.h" />
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="..\Source\Game\source\Space Invaders\Entity.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\collision\Collider.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\collision\CollisionManager.cpp" />
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\interaction\HealthInteractor.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\CanvasManager.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\ui\framework\UICanvas.cpp" />
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\WeaponSystem.cpp" />

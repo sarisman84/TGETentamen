@@ -68,7 +68,6 @@ void GameWorld::Update(float aTimeDelta)
 	UNREFERENCED_PARAMETER(aTimeDelta);
 	myTestScene.Update(aTimeDelta);
 	si::CollisionManager::HandleCollisions(&myTestScene);
-
 }
 
 void GameWorld::Render()

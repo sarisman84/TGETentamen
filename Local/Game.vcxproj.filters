@@ -33,6 +33,9 @@
     <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\collision\Collider.cpp">
       <Filter>Space Invaders\Logistics\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Game\source\Space Invaders\logistics\interaction\HealthInteractor.cpp">
+      <Filter>Space Invaders\Logistics\Interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Game\source\GameWorld.h" />
@@ -72,6 +75,9 @@
     <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\collision\CollisionManager.h">
       <Filter>Space Invaders\Logistics\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Game\source\Space Invaders\logistics\interaction\HealthInteractor.h">
+      <Filter>Space Invaders\Logistics\Interaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Space Invaders">
@@ -97,6 +103,9 @@
     </Filter>
     <Filter Include="Space Invaders\Logistics\Collision">
       <UniqueIdentifier>{854f617c-2dd8-435a-ac6e-111b697e2395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Space Invaders\Logistics\Interaction">
+      <UniqueIdentifier>{7db9ddfc-bc11-4cf5-b6da-fa2df3c974c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

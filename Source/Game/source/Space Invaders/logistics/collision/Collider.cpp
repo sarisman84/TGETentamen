@@ -4,7 +4,7 @@
 
 void si::Collider::Awake()
 {
-	myEntity->myCurrentScene->GetColliders().push_back(this);
+	myEntity->myCurrentScene->GetColliders()[myEntity->GetUUID()] = this;
 }
 
 void si::Collider::Update(const float /*aDT*/)
@@ -12,10 +12,9 @@ void si::Collider::Update(const float /*aDT*/)
 	myCollisionState = false;
 }
 
+
 void si::Collider::OnDestroy()
 {
-	auto& colliders = myEntity->myCurrentScene->GetColliders();
-	colliders.erase(std::remove(colliders.begin(), colliders.end(), this), colliders.end());
 }
 
 const bool si::Collider::TriggerCollisionEvent(Entity* const someOtherEntity)

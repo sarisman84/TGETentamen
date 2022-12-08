@@ -11,6 +11,7 @@ const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 	entity->mySprite.mySpritePath = someInformation.myTexture;
 	auto bc = &entity->AddComponent<BulletController>();
 
+
 	bc->SetOwnerID(someInformation.myOwnerID);
 	bc->SetDirection(someInformation.myDirection);
 	bc->SetDamage(someInformation.myDamage);

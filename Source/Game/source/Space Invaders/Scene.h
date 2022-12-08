@@ -34,7 +34,7 @@ namespace si
 		void MarkForDelete(const uint32_t anUUID);
 		void ClearGarbage();
 	public: //Accessors
-		std::vector<Collider*>& GetColliders() { return myColliders; }
+		std::unordered_map<uint32_t, Collider*>& GetColliders() { return myColliders; }
 	private:
 		void ExecuteComponent(std::vector<std::shared_ptr<Component>>& someComponents, void(*anOnComponentExecute)(const float, Component*), const float aDT = 0);
 
@@ -42,7 +42,7 @@ namespace si
 		std::vector<uint32_t> myGarbageCollection;
 		std::unordered_map<uint32_t, std::shared_ptr<Entity>> myEntities;
 		std::unordered_map<uint32_t, Tga::SpriteSharedData> myVisualEntities;
-		std::vector<Collider*> myColliders;
+		std::unordered_map<uint32_t, Collider*> myColliders;
 
 	private: //Logistics
 		Tga::SpriteDrawer* myRenderer;
