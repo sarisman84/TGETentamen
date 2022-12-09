@@ -30,6 +30,8 @@ namespace si
 
 		inline const uint32_t GetUUID() { return myUUID; }
 
+		const bool IsInRenderView() ;
+
 	public:
 		inline const bool operator==(const Entity& someOther) {
 			return myUUID == someOther.myUUID;

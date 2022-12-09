@@ -16,6 +16,7 @@ namespace si
 	public:
 		inline const float GetCurrentHealth() { return myCurrentHealth; }
 		inline const float GetHealth() { return myMaxHealth; }
+		inline std::function<void()>& OnDeathEvent() { return myOnDeathEvent; }
 	private:
 		void OnDeath();
 	private:

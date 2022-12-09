@@ -1,0 +1,16 @@
+{
+    "entities": [
+        {
+            "transform": {
+                "position": {
+                    "x": "half_screen_size_x",
+                    "y": "half_screen_size_y"
+                },
+                "scale": "texture_size",
+                "rotation": 0
+            },
+            "texture": "Textures/background.dds",
+            "components": {}
+        }
+    ]
+}

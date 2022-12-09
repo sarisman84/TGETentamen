@@ -1,0 +1,35 @@
+{
+    "entities": [
+        {
+            "transform": {
+                "position": {
+                    "x": "half_screen_size_x",
+                    "y": "half_screen_size_y"
+                },
+                "scale": "texture_size",
+                "rotation": 0
+            },
+            "texture": "Textures/background.dds",
+            "components": {}
+        },
+        {
+            "transform": {
+                "position": {
+                    "x": "half_screen_size_x",
+                    "y": 150
+                },
+                "scale": "texture_size",
+                "rotation": 0
+            },
+            "texture": "Textures/player.dds",
+            "components": [
+                {
+                    "type": "InputController"
+                },
+                {
+                    "type": "Actor"
+                }
+            ]
+        }
+    ]
+}

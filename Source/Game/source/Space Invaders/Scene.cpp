@@ -15,12 +15,15 @@
 
 
 
-si::Scene::Scene() = default;
-
-void si::Scene::Init()
+si::Scene::Scene()
 {
 	myEngine = Tga::Engine::GetInstance();
 	myRenderer = &myEngine->GetGraphicsEngine().GetSpriteDrawer();
+}
+
+void si::Scene::Init()
+{
+
 
 	auto& textureManager = myEngine->GetTextureManager();
 
@@ -35,6 +38,7 @@ void si::Scene::Init()
 
 void si::Scene::Update(const float aDT)
 {
+	if (!myActiveState) return;
 	ClearGarbage();
 
 	auto cpy = myEntities;
@@ -49,6 +53,7 @@ void si::Scene::Update(const float aDT)
 
 void si::Scene::Render()
 {
+	if (!myActiveState) return;
 	auto cpy = myVisualEntities;
 	for (auto& p : cpy)
 	{
@@ -96,7 +101,7 @@ void si::Scene::ExecuteComponent(std::vector<std::shared_ptr<Component>>& someCo
 
 
 
-void si::Scene::operator +=(Entity* const anEntity)
+uint32_t si::Scene::operator +=(Entity* const anEntity)
 {
 	uint32_t id = static_cast<uint32_t>(rand());
 
@@ -114,6 +119,8 @@ void si::Scene::operator +=(Entity* const anEntity)
 		{
 			aComponent->Awake();
 		});
+
+	return id;
 }
 
 void si::Scene::operator +=(const std::initializer_list<Entity*>& aList)
@@ -122,6 +129,11 @@ void si::Scene::operator +=(const std::initializer_list<Entity*>& aList)
 	{
 		(*this) += e;
 	}
+}
+
+si::Entity* si::Scene::operator[](const uint32_t anID)
+{
+	return myEntities[anID].get();
 }
 
 void si::Scene::MarkForDelete(const uint32_t anUUID)
@@ -159,4 +171,14 @@ void si::Scene::ClearGarbage()
 	}
 
 	myGarbageCollection.clear();
+}
+
+const bool si::Scene::IsActive() const
+{
+	return myActiveState;
+}
+
+void si::Scene::SetActive(const bool aNewState)
+{
+	myActiveState = aNewState;
 }

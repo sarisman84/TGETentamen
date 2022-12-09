@@ -28,11 +28,16 @@ namespace si
 		void Update(const float aDT);
 		void Render();
 	public: //Helper Logic/Operations
-		void operator +=(Entity* const anEntity);
+		uint32_t operator +=(Entity* const anEntity);
 		void operator +=(const std::initializer_list<Entity*>& aList);
+		Entity* operator[](const uint32_t anID);
 
 		void MarkForDelete(const uint32_t anUUID);
 		void ClearGarbage();
+
+	public: //State Managemnet
+		const bool IsActive() const;
+		void SetActive(const bool aNewState);
 	public: //Accessors
 		std::unordered_map<uint32_t, Collider*>& GetColliders() { return myColliders; }
 	private:
@@ -47,5 +52,7 @@ namespace si
 	private: //Logistics
 		Tga::SpriteDrawer* myRenderer;
 		Tga::Engine* myEngine;
+	private: //Other
+		bool myActiveState;
 	};
 }

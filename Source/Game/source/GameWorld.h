@@ -1,19 +1,20 @@
 #pragma once
 #include "Space Invaders/Scene.h"
+#include "Space Invaders/logistics/ai/EnemyManager.h"
+#include "Space Invaders/logistics/factories/EnemyFactory.h"
+#include "Space Invaders/logistics/scene management/SceneManager.h"
 
 class GameWorld
 {
 public:
-	GameWorld(); 
+	GameWorld();
 	~GameWorld();
 
 	void Init();
-	void Update(float aTimeDelta); 
+	void Update(float aTimeDelta);
 	void Render();
-private:
-	Tga::Sprite2DInstanceData myTGELogoInstance = {};
-	Tga::SpriteSharedData sharedData = {};
-
 private: //Space Invaders
-	si::Scene myTestScene;
+	si::SceneManager mySceneManager;
+	si::WaveManager myWaveManager;
+	si::EnemyFactory myEnemyFactory;
 };
