@@ -56,7 +56,7 @@ namespace si
 		std::vector<uint32_t> myCurrentWave;
 		std::vector<std::vector<WaveSlot>> myWaveRegistry;
 		std::function<void()> myOnAllWaveClearEvent;
-	private:
+	private: //Data
 		Tga::Vector2f myGroupVelocity;
 		bool myCanSpawnWavesFlag;
 		bool myInfiniteWavesFlag;
@@ -65,6 +65,7 @@ namespace si
 		uint32_t
 			myLeftMostEnemy,
 			myRightMostEnemy;
+		uint32_t myWaveCount;
 	private:
 		inline static WaveManager* ourInstance;
 	};

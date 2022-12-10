@@ -67,18 +67,28 @@ void si::WaveManager::Update(const float /*aDT*/)
 
 	if (ourInstance->IsWaveDead())
 	{
-		ourInstance->myCurrentWaveIndex++;
-		if (ourInstance->myCurrentWaveIndex >= ourInstance->myWaveRegistry.size())
+		if (ourInstance->myInfiniteWavesFlag)
 		{
-			if (ourInstance->myOnAllWaveClearEvent)
-				ourInstance->myOnAllWaveClearEvent();
-
-			ourInstance->myCanSpawnWavesFlag = false;
-			LOG("All Waves cleared!");
-			//You won
-			return;
+			ourInstance->myCurrentWaveIndex = rand() % ourInstance->myWaveRegistry.size();
+			ourInstance->SpawnWave();
 		}
-		ourInstance->SpawnWave();
+		else
+		{
+			ourInstance->myCurrentWaveIndex++;
+			if (ourInstance->myCurrentWaveIndex >= ourInstance->myWaveRegistry.size())
+			{
+				if (ourInstance->myOnAllWaveClearEvent)
+					ourInstance->myOnAllWaveClearEvent();
+
+				ourInstance->myCanSpawnWavesFlag = false;
+				LOG("All Waves cleared!");
+				//You won
+				return;
+			}
+			ourInstance->SpawnWave();
+		}
+
+
 	}
 
 
@@ -103,6 +113,8 @@ void si::WaveManager::MarkAsDead(const uint32_t anEnemyID)
 
 void si::WaveManager::Start()
 {
+	ourInstance->myWaveCount = 0;
+	ScoreSystem::ResetScore();
 	ourInstance->myCanSpawnWavesFlag = true;
 	ourInstance->SpawnWave();
 }
@@ -150,6 +162,7 @@ void si::WaveManager::UpdateWave()
 
 void si::WaveManager::SpawnWave()
 {
+	myWaveCount++;
 	myGroupVelocity = { 1.0f, 0.0f };
 	LOG("Initializing Wave " + std::to_string(myCurrentWaveIndex));
 	LOG("Initial Group Velocity [" + std::to_string(myGroupVelocity.x) + ", " + std::to_string(myGroupVelocity.y) + "]");

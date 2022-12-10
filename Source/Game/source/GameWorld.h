@@ -3,6 +3,8 @@
 #include "Space Invaders/logistics/ai/EnemyManager.h"
 #include "Space Invaders/logistics/factories/EnemyFactory.h"
 #include "Space Invaders/logistics/scene management/SceneManager.h"
+#include "Space Invaders/logistics/ScoreSystem.h"
+
 
 class GameWorld
 {
@@ -14,6 +16,7 @@ public:
 	void Update(float aTimeDelta);
 	void Render();
 private: //Space Invaders
+	si::ScoreSystem myScoreSystem;
 	si::SceneManager mySceneManager;
 	si::WaveManager myWaveManager;
 	si::EnemyFactory myEnemyFactory;

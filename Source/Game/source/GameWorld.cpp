@@ -19,6 +19,7 @@ void GameWorld::Init()
 {
 	si::SceneManager::LoadScene("playground.json");
 	si::WaveManager::LoadWaves("Data/Waves/testWave.json");
+	si::WaveManager::InfiniteWaves() = true;
 	si::WaveManager::Start();
 }
 void GameWorld::Update(float aTimeDelta)

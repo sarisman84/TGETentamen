@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Component.h"
 #include "../../logistics/WeaponSystem.h"
+#include "../../logistics/ScoreSystem.h"
 namespace si
 {
 	class EightBitActor;

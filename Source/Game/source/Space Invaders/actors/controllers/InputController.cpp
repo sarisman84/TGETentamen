@@ -29,7 +29,7 @@ void si::InputController::Awake()
 	myBulletInfo.myDamage = 1.0f;
 	myBulletInfo.myTexture = L"Textures/shot1.dds";
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
-	myFireRate = 0.75f;
+	myFireRate = 0.25f;
 
 	myActor->myMovementSpeed = myMovementSpeed;
 

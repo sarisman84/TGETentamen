@@ -20,6 +20,7 @@ namespace si
 		Tga::Vector2f myBulletFireDir;
 
 		float myHealthAmm = 1;
+		float myPointAmm = 10;
 	};
 
 	class EnemyFactory

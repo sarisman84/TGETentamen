@@ -21,24 +21,26 @@ si::EnemyFactory::EnemyFactory()
 
 	EnemyBlueprint type2;
 	type2.myTexture = L"Textures/enemy2.dds";
-	type2.myHealthAmm = 1;
+	type2.myHealthAmm = 2;
 	type2.myFireRate = 0.75f;
 	type2.myBulletTexture = L"Textures/shot2.dds";
 	type2.myBulletSpeed = 150.0f;
 	type2.myBulletFireDir = Tga::Vector2f(0.0f, -1.0f);
 	type2.myBulletDamage = 1.0f;
 	type2.myBulletCollisionRadius = 45.0f;
+	type2.myPointAmm = 20.0f;
 	AddType(EnemyID::Tier1, type2);
 
 	EnemyBlueprint type3;
 	type3.myTexture = L"Textures/enemy3.dds";
-	type3.myHealthAmm = 2;
+	type3.myHealthAmm = 3;
 	type3.myFireRate = 0.5f;
 	type3.myBulletTexture = L"Textures/shot2.dds";
 	type3.myBulletSpeed = 175.0f;
 	type3.myBulletFireDir = Tga::Vector2f(0.0f, -1.0f);
 	type3.myBulletDamage = 1.0f;
 	type3.myBulletCollisionRadius = 30.0f;
+	type3.myPointAmm = 40.0f;
 	AddType(EnemyID::Tier2, type3);
 
 }
@@ -71,7 +73,11 @@ si::Entity* const si::EnemyFactory::GetEnemy(const uint32_t anEnemyType)
 	bullet.myTexture = type.myBulletTexture;
 
 	healthInteractor.SetHealth(type.myHealthAmm);
-	healthInteractor.OnDeathEvent() = [newEnemy]() { WaveManager::MarkAsDead(newEnemy->GetUUID()); };
+	healthInteractor.OnDeathEvent() = [newEnemy, type]()
+	{
+		WaveManager::MarkAsDead(newEnemy->GetUUID());
+		ScoreSystem::IncrementScore(static_cast<uint32_t>(type.myPointAmm));
+	};
 
 	actor.myMovementSpeed = 1.5f;
 
