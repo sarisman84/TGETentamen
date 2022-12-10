@@ -6,7 +6,10 @@
                     "x": "half_screen_size_x",
                     "y": "half_screen_size_y"
                 },
-                "scale": "texture_size",
+                "scale": {
+                    "x": 1,
+                    "y": 1
+                },
                 "rotation": 0
             },
             "texture": "Textures/background.dds",
@@ -18,7 +21,10 @@
                     "x": "half_screen_size_x",
                     "y": 150
                 },
-                "scale": "texture_size",
+                "scale": {
+                    "x": 1,
+                    "y": 1
+                },
                 "rotation": 0
             },
             "texture": "Textures/player.dds",

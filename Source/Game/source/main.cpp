@@ -31,8 +31,8 @@ LRESULT WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void InitCallBack()
 {
-	unsigned short windowWidth = 1920;
-	unsigned short windowHeight = 1080;
+	unsigned short windowWidth = 1024;
+	unsigned short windowHeight = 1024;
 
 	Tga::EngineCreateParameters createParameters;
 #ifdef _DEBUG

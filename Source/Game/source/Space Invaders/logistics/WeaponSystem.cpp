@@ -9,6 +9,7 @@ const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 	auto entity = new Entity();
 	entity->myTransform.Position() = someInformation.mySpawnPos;
 	entity->mySprite.mySpritePath = someInformation.myTexture;
+	entity->mySprite.mySizeOffset = { 1,1 };
 	auto bc = &entity->AddComponent<BulletController>();
 
 

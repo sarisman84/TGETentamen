@@ -2,6 +2,7 @@
 #include "../../Scene.h"
 #include "../collision/CollisionManager.h"
 #include "../../actors/controllers/InputController.h"
+#include "../logging/Logger.h"
 
 #include <tge/engine.h>
 #include <tge/settings/settings.h>
@@ -13,7 +14,13 @@
 #include <atlconv.h>
 
 #include <cassert>
+#include <filesystem>
 
+
+#include <string>
+#include <Windows.h>
+
+#pragma warning(disable: 4267)
 
 si::SceneManager::SceneManager()
 {
@@ -64,7 +71,13 @@ si::Scene* const si::SceneManager::GetCurrentScene()
 }
 
 
-
+std::wstring ToWideChar(const std::string& aVal)
+{
+	size_t count = MultiByteToWideChar(CP_ACP, 0, aVal.c_str(), aVal.length(), NULL, 0);
+	std::wstring wstr(count, 0);
+	MultiByteToWideChar(CP_ACP, 0, aVal.c_str(), aVal.length(), &wstr[0], count);
+	return wstr;
+}
 
 void si::SceneManager::LoadSceneFromFile(const std::string& aPath)
 {
@@ -85,42 +98,51 @@ void si::SceneManager::LoadSceneFromFile(const std::string& aPath)
 	{
 		auto newEntity = new Entity();
 
-		newEntity->mySprite.mySpritePath = std::wstring(CA2W(entity["texture"].get<std::string>().c_str())).c_str();
 
+
+		auto p = ToWideChar(entity["texture"].get<std::string>());
+		newEntity->mySprite.mySpritePath = p.c_str();
+		LOG("Attempting to load texture: " + entity["texture"].get<std::string>());
 		auto& ePos = newEntity->myTransform.Position();
-		Tga::Vector2f pos;
+		newEntity->mySprite.mySizeOffset = Tga::Vector2f(entity["transform"]["scale"]["x"], entity["transform"]["scale"]["y"]);
 
-		json jPos = entity["transform"]["position"];
-		json jScale = entity["transform"]["scale"];
 
-		if (jPos.is_string() && jPos.get<std::string>().find("half_screen_size") != std::string::npos)
 		{
-			pos.x = static_cast<float>(engine->GetRenderSize().x) / 2.0f;
-			pos.y = static_cast<float>(engine->GetRenderSize().y) / 2.0f;
-		}
-		else
-		{
-			json xCoord = jPos["x"];
-			json yCoord = jPos["y"];
-			if (xCoord.is_string() && xCoord.get<std::string>().find("half_screen_size") != std::string::npos)
+			Tga::Vector2f pos;
+			json jPos = entity["transform"]["position"];
+
+			if (jPos.is_string() && jPos.get<std::string>().find("half_screen_size") != std::string::npos)
 			{
 				pos.x = static_cast<float>(engine->GetRenderSize().x) / 2.0f;
-			}
-			else
-			{
-				pos.x = xCoord;
-			}
-
-			if (yCoord.is_string() && yCoord.get<std::string>().find("half_screen_size") != std::string::npos)
-			{
 				pos.y = static_cast<float>(engine->GetRenderSize().y) / 2.0f;
 			}
 			else
 			{
-				pos.y = yCoord;
+				json xCoord = jPos["x"];
+				json yCoord = jPos["y"];
+				if (xCoord.is_string() && xCoord.get<std::string>().find("half_screen_size") != std::string::npos)
+				{
+					pos.x = static_cast<float>(engine->GetRenderSize().x) / 2.0f;
+				}
+				else
+				{
+					pos.x = xCoord;
+				}
+
+				if (yCoord.is_string() && yCoord.get<std::string>().find("half_screen_size") != std::string::npos)
+				{
+					pos.y = static_cast<float>(engine->GetRenderSize().y) / 2.0f;
+				}
+				else
+				{
+					pos.y = yCoord;
+				}
 			}
+			ePos = pos;
 		}
-		ePos = pos;
+
+
+
 
 		for (auto& comp : entity["components"])
 		{

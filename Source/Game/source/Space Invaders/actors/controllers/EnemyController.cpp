@@ -10,7 +10,7 @@
 void si::EnemyController::Init()
 {
 	myActor = &myEntity->AddComponent<EightBitActor>();
-	myHealthInteractor = &myEntity->AddComponent<HealthInteractor>();
+	myHealthInteractor = myEntity->GetComponent<HealthInteractor>();
 	myGeneralBulletInfo.myOwnerID = myEntity->GetUUID();
 
 	//myActor->myMovementSpeed = 
@@ -19,8 +19,9 @@ void si::EnemyController::Init()
 
 void si::EnemyController::Update(const float /*aDT*/)
 {
+	if (!myActor) return;
 	myActor->myPositionOffset = WaveManager::GetGroupVelocity();
-	
+
 }
 
 

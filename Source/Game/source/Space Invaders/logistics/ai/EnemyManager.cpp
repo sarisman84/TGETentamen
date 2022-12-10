@@ -5,15 +5,20 @@
 #include "../factories/EnemyFactory.h"
 #include "../scene management/SceneManager.h"
 #include "../../Scene.h"
+#include "../logging/Logger.h"
 
 #include <tge/engine.h>
+#include <tge/settings/settings.h>
 
 #include <fstream>
 #include <nlohmann/json.hpp>
+
+
 si::WaveManager::WaveManager()
 {
 	myCurrentWaveIndex = 0;
 	myCanSpawnWavesFlag = false;
+	ourInstance = this;
 }
 
 
@@ -29,10 +34,13 @@ void si::WaveManager::LoadWaves(const std::string& aPath)
 
 void si::WaveManager::LoadWavesImpl(const std::string& aPath)
 {
-	std::ifstream waveIfs(aPath);
+	std::ifstream waveIfs(Tga::Settings::GetAssetW(aPath));
 
-	if (!waveIfs || waveIfs.fail()) return;
-
+	if (!waveIfs || waveIfs.fail())
+	{
+		ERROR_LOG("Could not load wave from (" + aPath + ") [File not found]");
+		return;
+	}
 	using namespace nlohmann;
 	json waveInfo = json::parse(waveIfs);
 
@@ -100,7 +108,7 @@ void si::WaveManager::UpdateWave()
 {
 	auto scene = SceneManager::GetCurrentScene();
 	auto engine = Tga::Engine::GetInstance();
-	
+
 	GetFurthestEnemiesOnEdges(scene);
 
 	auto lEntity = (*scene)[myLeftMostEnemy];
@@ -127,6 +135,8 @@ void si::WaveManager::UpdateWave()
 
 void si::WaveManager::SpawnWave()
 {
+	LOG("Initializing Wave " + std::to_string(myCurrentWaveIndex));
+	LOG("Initial Group Velocity [" + std::to_string(myGroupVelocity.x) + ", " + std::to_string(myGroupVelocity.y) + "]");
 	auto scene = SceneManager::GetCurrentScene();
 	auto& wave = myWaveRegistry[myCurrentWaveIndex];
 	for (size_t i = 0; i < wave.size(); i++)
@@ -134,7 +144,7 @@ void si::WaveManager::SpawnWave()
 		auto enemy = EnemyFactory::GetEnemy(wave[i].myEnemyType);
 		enemy->myTransform.Position() = wave[i].myPosition;
 		(*scene) += enemy;
-
+		LOG("Spawned Enemy [" + std::to_string(static_cast<int>(wave[i].myEnemyType)) + "] at " + std::to_string(wave[i].myPosition.x) + ", " + std::to_string(wave[i].myPosition.y));
 	}
 }
 

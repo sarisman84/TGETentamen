@@ -2,6 +2,7 @@
 #include "../../Entity.h"
 #include "../Actor.h"
 #include "../../logistics/collision/Collider.h"
+#include "../../logistics/interaction/HealthInteractor.h"
 #include "../../Scene.h"
 
 #include <tge/engine.h>
@@ -16,6 +17,12 @@ void si::BulletController::Awake()
 	myCollider->OnCollisionEvent() = [this](Entity* someOtherEntity)
 	{
 		if (someOtherEntity->GetUUID() == myOwnerID) return;
+
+		if (someOtherEntity->GetComponent<BulletController>()) return;
+
+		if (auto interactor = someOtherEntity->GetComponent<HealthInteractor>())
+			interactor->TakeDamage(myDamage);
+
 		DestroySelf();
 	};
 }

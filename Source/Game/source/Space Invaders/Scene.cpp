@@ -13,6 +13,9 @@
 
 #include "logistics/collision/Collider.h"
 
+#include "logistics/logging/Logger.h"
+
+#pragma warning(disable: 4244)
 
 
 si::Scene::Scene()
@@ -60,15 +63,18 @@ void si::Scene::Render()
 		if (!myEntities[p.first]->IsActive()) continue;
 
 		auto& vE = p.second;
+		auto& e = myEntities[p.first];
+		std::wstring sp(e->mySprite.mySpritePath);
+		//LOG("Rendering entity " + std::to_string(p.first) + " with texture: " + std::string(sp.begin(), sp.end()));
 
 		Tga::Sprite2DInstanceData data = {};
-		auto pos = myEntities[p.first]->myTransform.GetPosition();
+		auto pos = e->myTransform.GetPosition();
 		auto size = myVisualEntities[p.first].myTexture->CalculateTextureSize();
 		data.myPosition = Tga::Vector2f{ pos.x, pos.y };
-		myEntities[p.first]->mySprite.mySize = Tga::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
-		data.myPivot = myEntities[p.first]->mySprite.myPivot;
-		data.mySize = myEntities[p.first]->mySprite.mySizeOffset + Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) };
-		data.myColor = myEntities[p.first]->mySprite.myColor;
+		e->mySprite.mySize = Tga::Vector2f(static_cast<float>(size.x), static_cast<float>(size.y));
+		data.myPivot = e->mySprite.myPivot;
+		data.mySize = Tga::Vector2f{ static_cast<float>(size.x), static_cast<float>(size.y) } *myEntities[p.first]->mySprite.mySizeOffset;
+		data.myColor = e->mySprite.myColor;
 
 		myRenderer->Draw(vE, data);
 	}
@@ -155,19 +161,23 @@ void si::Scene::ClearGarbage()
 
 		auto& elm = myEntities[index];
 
-		ExecuteComponent(elm->GetComponents(), [](const float /*aDT*/, Component* aComp)
-			{
-				aComp->OnDestroy();
+		if (elm)
+			ExecuteComponent(elm->GetComponents(), [](const float /*aDT*/, Component* aComp)
+				{
+					aComp->OnDestroy();
 
-			});
+				});
 
 		myEntities.erase(index);
 		myVisualEntities.erase(index);
 		myColliders.erase(index);
 
-#ifndef _RETAIL
-		std::cout << "[LOG][Scene::GarbageCollector]: Cleared entity " << index << "!\n";
-#endif
+
+		LOG("[System - Garbage Collection] Cleared entity " + std::to_string(index));
+
+		//#ifndef _RETAIL
+		//		std::cout << "[LOG][Scene::GarbageCollector]: Cleared entity " << index << "!\n";
+		//#endif
 	}
 
 	myGarbageCollection.clear();

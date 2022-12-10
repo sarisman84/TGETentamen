@@ -17,8 +17,9 @@ GameWorld::~GameWorld()
 
 void GameWorld::Init()
 {
-	si::SceneManager::LoadScene("mainMenu.json");
+	si::SceneManager::LoadScene("playground.json");
 	si::WaveManager::LoadWaves("Data/Waves/testWave.json");
+	si::WaveManager::Start();
 }
 void GameWorld::Update(float aTimeDelta)
 {

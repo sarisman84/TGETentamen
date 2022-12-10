@@ -5,6 +5,7 @@
 
 #include "../../actors/controllers/EnemyController.h"
 #include "../interaction/HealthInteractor.h"
+#include "../collision/Collider.h"
 #include "../../Entity.h"
 
 si::EnemyFactory::EnemyFactory()
@@ -53,16 +54,20 @@ si::Entity* const si::EnemyFactory::GetEnemy(const uint32_t anEnemyType)
 
 	auto newEnemy = new Entity();
 	newEnemy->mySprite.mySpritePath = type.myTexture;
-
+	newEnemy->mySprite.mySizeOffset = { 1,1 };
 	auto& enemyController = newEnemy->AddComponent<EnemyController>();
-
+	auto& healthInteractor = newEnemy->AddComponent<HealthInteractor>();
+	auto& collider = newEnemy->AddComponent<Collider>();
 	auto& bullet = enemyController.WeaponInfo();
+
+	collider.myCollisionRadius = 45.0f;
+
 	bullet.myColliderRadius = type.myBulletCollisionRadius;
 	bullet.myDamage = type.myBulletDamage;
 	bullet.myDirection = type.myBulletFireDir * type.myBulletSpeed;
 	bullet.myTexture = type.myBulletTexture;
 
-	enemyController.HealthInfo()->SetHealth(type.myHealthAmm);
+	healthInteractor.SetHealth(type.myHealthAmm);
 
 
 

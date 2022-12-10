@@ -85,8 +85,8 @@ namespace Tga
         { 
             myHwnd							= nullptr; 
             myHInstance						= nullptr;  
-            myWindowWidth					= 1280;
-            myWindowHeight					= 720; 
+            myWindowWidth					= 1024;
+            myWindowHeight					= 1024; 
             myEnableVSync					= false; 
             myRenderWidth					= myWindowWidth; 
             myRenderHeight					= myWindowHeight; 
