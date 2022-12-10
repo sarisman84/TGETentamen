@@ -5,6 +5,7 @@
 
 namespace si
 {
+	class EightBitActor;
 	class Actor;
 
 	enum class Key : int
@@ -24,7 +25,7 @@ namespace si
 		void Awake() override;
 		void Update(const float aDT) override;
 	private: //Movement
-		Actor* myActor;
+		EightBitActor* myActor;
 		float myMovementSpeed;
 	private: //Weapon Logic
 		float myFireRate = 0.25f;

@@ -9,12 +9,9 @@
 
 void si::EnemyController::Init()
 {
-	myActor = &myEntity->AddComponent<EightBitActor>();
+	myActor = myEntity->GetComponent<EightBitActor>();
 	myHealthInteractor = myEntity->GetComponent<HealthInteractor>();
 	myGeneralBulletInfo.myOwnerID = myEntity->GetUUID();
-
-	//myActor->myMovementSpeed = 
-	myHealthInteractor->OnDeathEvent() = [this]() { WaveManager::MarkAsDead(GetEnemyUUID()); };
 }
 
 void si::EnemyController::Update(const float /*aDT*/)
@@ -22,6 +19,10 @@ void si::EnemyController::Update(const float /*aDT*/)
 	if (!myActor) return;
 	myActor->myPositionOffset = WaveManager::GetGroupVelocity();
 
+	if (myActor->GetPreviousPosition().y != myEntity->myTransform.Position().y) 
+	{
+		WaveManager::ResetDecentFlag();
+	}
 }
 
 

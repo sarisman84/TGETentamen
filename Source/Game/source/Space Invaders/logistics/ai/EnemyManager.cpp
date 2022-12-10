@@ -1,6 +1,7 @@
 #include "EnemyManager.h"
 #include "../../Entity.h"
 #include "../../actors/controllers/EnemyController.h"
+#include "../../actors/8BitActor.h"
 
 #include "../factories/EnemyFactory.h"
 #include "../scene management/SceneManager.h"
@@ -61,34 +62,43 @@ void si::WaveManager::LoadWavesImpl(const std::string& aPath)
 
 void si::WaveManager::Update(const float /*aDT*/)
 {
-	if (!myCanSpawnWavesFlag) return;
+	if (!ourInstance) return;
+	if (!ourInstance->myCanSpawnWavesFlag) return;
 
-	if (IsWaveDead())
+	if (ourInstance->IsWaveDead())
 	{
-		myCurrentWaveIndex++;
-		if (myCurrentWaveIndex >= myWaveRegistry.size())
+		ourInstance->myCurrentWaveIndex++;
+		if (ourInstance->myCurrentWaveIndex >= ourInstance->myWaveRegistry.size())
 		{
-			if (myOnAllWaveClearEvent)
-				myOnAllWaveClearEvent();
+			if (ourInstance->myOnAllWaveClearEvent)
+				ourInstance->myOnAllWaveClearEvent();
+
+			ourInstance->myCanSpawnWavesFlag = false;
+			LOG("All Waves cleared!");
 			//You won
 			return;
 		}
-		SpawnWave();
+		ourInstance->SpawnWave();
 	}
 
 
-	UpdateWave();
+	ourInstance->UpdateWave();
 }
 
 const bool si::WaveManager::IsWaveDead()
 {
-	return myCurrentWave.empty();
+	bool isWaveDead = myCurrentWave.empty();
+	if (isWaveDead)
+		LOG("Current wave has no remaining enemies alive!");
+	return isWaveDead;
 }
 
 void si::WaveManager::MarkAsDead(const uint32_t anEnemyID)
 {
 	auto& curWave = ourInstance->myCurrentWave;
 	curWave.erase(std::remove(curWave.begin(), curWave.end(), anEnemyID), curWave.end());
+	LOG("Entity " + std::to_string(anEnemyID) + " is dead. Clearing wave cache!");
+	LOG("Current Wave: [" + std::to_string(ourInstance->myCurrentWave.size()) + " remaining]");
 }
 
 void si::WaveManager::Start()
@@ -116,15 +126,20 @@ void si::WaveManager::UpdateWave()
 
 	if (!lEntity || !rEntity) return;
 
-	auto lPos = lEntity->myTransform.Position().x - (lEntity->myTransform.Scale().x / 2.0f);
-	auto rPos = rEntity->myTransform.Position().x + (rEntity->myTransform.Scale().x / 2.0f);
+	auto lActor = lEntity->GetComponent<EightBitActor>();
+	auto rActor = rEntity->GetComponent<EightBitActor>();
+
+	if (!lActor || !rActor) return;
+
+	auto lPos = lActor->GetNextPosition().x - (lEntity->mySprite.mySize.x / 2.0f);
+	auto rPos = rActor->GetNextPosition().x + (rEntity->mySprite.mySize.x / 2.0f);
 
 	bool isOutOfBoundsL = lPos <= 0;
 	bool isOutOfBoundsR = rPos >= engine->GetRenderSize().x;
 
 	if (isOutOfBoundsL || isOutOfBoundsR)
 	{
-		DecrementPosition();
+		myGroupReachedEdgeFlag = true;
 		//If the group is out of bounds on the left, make the group go to the right
 		//If the group is out of bounds on the right, make the group go to the left
 		myGroupVelocity = Tga::Vector2f(isOutOfBoundsL ? 1.0f : isOutOfBoundsR ? -1.0f : myGroupVelocity.x, 0.0f);
@@ -135,6 +150,7 @@ void si::WaveManager::UpdateWave()
 
 void si::WaveManager::SpawnWave()
 {
+	myGroupVelocity = { 1.0f, 0.0f };
 	LOG("Initializing Wave " + std::to_string(myCurrentWaveIndex));
 	LOG("Initial Group Velocity [" + std::to_string(myGroupVelocity.x) + ", " + std::to_string(myGroupVelocity.y) + "]");
 	auto scene = SceneManager::GetCurrentScene();
@@ -145,12 +161,11 @@ void si::WaveManager::SpawnWave()
 		enemy->myTransform.Position() = wave[i].myPosition;
 		(*scene) += enemy;
 		LOG("Spawned Enemy [" + std::to_string(static_cast<int>(wave[i].myEnemyType)) + "] at " + std::to_string(wave[i].myPosition.x) + ", " + std::to_string(wave[i].myPosition.y));
+		myCurrentWave.push_back(enemy->GetUUID());
 	}
 }
 
-void si::WaveManager::DecrementPosition()
-{
-}
+
 
 void si::WaveManager::GetFurthestEnemiesOnEdges(Scene* const aScene)
 {

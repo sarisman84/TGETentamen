@@ -3,10 +3,12 @@
 #include "../scene management/SceneManager.h"
 #include "../../Scene.h"
 
+#include "../../actors/8BitActor.h"
 #include "../../actors/controllers/EnemyController.h"
 #include "../interaction/HealthInteractor.h"
 #include "../collision/Collider.h"
 #include "../../Entity.h"
+#include "../ai/EnemyManager.h"
 
 si::EnemyFactory::EnemyFactory()
 {
@@ -57,6 +59,7 @@ si::Entity* const si::EnemyFactory::GetEnemy(const uint32_t anEnemyType)
 	newEnemy->mySprite.mySizeOffset = { 1,1 };
 	auto& enemyController = newEnemy->AddComponent<EnemyController>();
 	auto& healthInteractor = newEnemy->AddComponent<HealthInteractor>();
+	auto& actor = newEnemy->AddComponent<EightBitActor>();
 	auto& collider = newEnemy->AddComponent<Collider>();
 	auto& bullet = enemyController.WeaponInfo();
 
@@ -68,8 +71,14 @@ si::Entity* const si::EnemyFactory::GetEnemy(const uint32_t anEnemyType)
 	bullet.myTexture = type.myBulletTexture;
 
 	healthInteractor.SetHealth(type.myHealthAmm);
+	healthInteractor.OnDeathEvent() = [newEnemy]() { WaveManager::MarkAsDead(newEnemy->GetUUID()); };
 
+	actor.myMovementSpeed = 1.5f;
 
+	for (auto& comp : newEnemy->GetComponents())
+	{
+		comp->Init();
+	}
 
 	return newEnemy;
 }

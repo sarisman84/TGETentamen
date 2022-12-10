@@ -1,6 +1,7 @@
 #include "InputController.h"
 #include "../../Entity.h"
 
+#include "../8BitActor.h"
 #include "../Actor.h"
 #include "../../logistics/collision/Collider.h"
 #include "../../logistics/interaction/HealthInteractor.h"
@@ -11,14 +12,14 @@
 
 void si::InputController::Awake()
 {
-	myActor = &myEntity->AddComponent<Actor>();
+	myActor = &myEntity->AddComponent<EightBitActor>();
 	auto& col = myEntity->AddComponent<Collider>();
 	auto& hi = myEntity->AddComponent< HealthInteractor>();
 
 	hi.SetHealth(1);
 
 	col.myCollisionRadius = 45.0f;
-	myMovementSpeed = 500.0f;
+	myMovementSpeed = 0.25f;
 
 	myEntity->myTransform.Scale() = { 150.0f, 150.0f };
 
@@ -30,19 +31,21 @@ void si::InputController::Awake()
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
 	myFireRate = 0.75f;
 
+	myActor->myMovementSpeed = myMovementSpeed;
+
 
 }
 
 void si::InputController::Update(const float aDT)
 {
 	myCurFireRate += aDT;
-	myActor->myVelocity = Tga::Vector2f{ 0.0f, 0.0f };
+	myActor->myPositionOffset = { 0,0 };
 
 
 	if (GetAsyncKeyState((int)Key::A))
-		myActor->myVelocity = Tga::Vector2f{ -1.0f, 0.0f } *myMovementSpeed;
+		myActor->myPositionOffset = Tga::Vector2f{ -1.0f, 0.0f };
 	if (GetAsyncKeyState((int)Key::D))
-		myActor->myVelocity = Tga::Vector2f{ 1.0f, 0.0f } *myMovementSpeed;
+		myActor->myPositionOffset = Tga::Vector2f{ 1.0f, 0.0f };
 
 	if (GetAsyncKeyState((int)Key::Space) && myCurFireRate >= myFireRate)
 	{
@@ -54,12 +57,12 @@ void si::InputController::Update(const float aDT)
 
 
 	auto pos = myActor->GetNextPosition();
-	auto size = myEntity->myTransform.Scale() / 2.0f;
+	auto size = myEntity->mySprite.mySize / 2.0f;
 
 	auto engine = Tga::Engine::GetInstance();
 	auto res = engine->GetRenderSize();
 
 	if (pos.x - size.x < 0 || pos.x + size.x > res.x)
-		myActor->myVelocity = { 0.0f, 0.0f };
+		myActor->myPositionOffset = { 0.0f, 0.0f };
 
 }

@@ -8,14 +8,15 @@ void si::CollisionManager::HandleCollisions(Scene* const aScene)
 	if (!aScene) return;
 
 	auto& colliders = aScene->GetColliders();
-	for (auto& aPair : colliders)
-	{
-		auto& colliderA = aPair.second;
-		for (auto& bPair : colliders)
-		{
-			if (aPair.first == bPair.first) continue;
 
-			auto& colliderB = bPair.second;
+
+
+	for (auto nextItA = colliders.begin(), itA = nextItA++; nextItA != colliders.end(); ++itA, ++nextItA)
+	{
+		auto& colliderA = (*itA).second;
+		for (auto itB = nextItA; itB != colliders.end(); ++itB)
+		{
+			auto& colliderB = (*itB).second;
 
 			if (colliderA->HasCollidedWith(colliderB))
 			{

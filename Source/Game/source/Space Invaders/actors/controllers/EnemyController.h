@@ -23,6 +23,7 @@ namespace si
 		HealthInteractor* myHealthInteractor;
 		Bullet myGeneralBulletInfo;
 		uint32_t myEnemyID;
+
 	};
 
 }

@@ -8,11 +8,16 @@ namespace si
 	public:
 		void Update(const float aDT) override;
 	public:
+		Tga::Vector2f GetNextPosition();
+		inline Tga::Vector2f GetPreviousPosition() { return myPreviousPosition; }
+	public:
 		Tga::Vector2f myPositionOffset;
+		Tga::Vector2f myPreviousPosition;
 		float myMovementSpeed;
 	private:
+		const float myPixelSizeOffset = 100.0f;
 		float myTempTimer;
-		
+
 
 	};
 }

@@ -25,6 +25,7 @@ void GameWorld::Update(float aTimeDelta)
 {
 	UNREFERENCED_PARAMETER(aTimeDelta);
 	si::SceneManager::Update(aTimeDelta);
+	si::WaveManager::Update(aTimeDelta);
 }
 
 void GameWorld::Render()

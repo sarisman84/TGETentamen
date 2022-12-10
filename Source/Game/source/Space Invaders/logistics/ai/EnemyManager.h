@@ -24,9 +24,18 @@ namespace si
 		WaveManager();
 	public:
 
-		void Update(const float aDT);
+
 	public: //Getters and Setters
-		static inline const Tga::Vector2f GetGroupVelocity() { return ourInstance->myGroupVelocity; }
+		static inline bool& InfiniteWaves() { return ourInstance->myInfiniteWavesFlag; }
+		static inline const Tga::Vector2f GetGroupVelocity()
+		{
+			if (ourInstance->myGroupReachedEdgeFlag)
+			{
+				return Tga::Vector2f(0.0f, -1.0f);
+			}
+			return ourInstance->myGroupVelocity;
+		}
+		static inline void ResetDecentFlag() { ourInstance->myGroupReachedEdgeFlag = false; }
 		static inline std::function<void()>& OnAllWavesCleared() { return ourInstance->myOnAllWaveClearEvent; }
 		const bool IsWaveDead();
 	public: //Communicators
@@ -35,14 +44,11 @@ namespace si
 		static void MarkAsDead(const uint32_t anEnemyID);
 		static void Start();
 		static void Reset();
-
+		static void Update(const float aDT);
 	private:
 		void LoadWavesImpl(const std::string& aPath);
-
 		void UpdateWave();
 		void SpawnWave();
-		void DecrementPosition();
-
 	private:
 		void GetFurthestEnemiesOnEdges(Scene* const aScene);
 
@@ -53,6 +59,8 @@ namespace si
 	private:
 		Tga::Vector2f myGroupVelocity;
 		bool myCanSpawnWavesFlag;
+		bool myInfiniteWavesFlag;
+		bool myGroupReachedEdgeFlag;
 		uint32_t myCurrentWaveIndex;
 		uint32_t
 			myLeftMostEnemy,
