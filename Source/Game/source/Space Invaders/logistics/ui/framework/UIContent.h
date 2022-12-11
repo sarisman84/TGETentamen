@@ -1,12 +1,18 @@
 #pragma once
 #include "../../../Component.h"
 
+#include <tge/math/vector2.h>
+#include <tge/text/text.h>
+
+#include <memory>
 #include <functional>
 #include <string>
+#include <variant>
 
-namespace Tga 
+#pragma warning(disable: 4624) //Union warning
+
+namespace Tga
 {
-	class Text;
 	struct Sprite2DInstanceData;
 }
 
@@ -19,58 +25,44 @@ namespace si
 		Text, Button
 	};
 
-	
+	typedef std::variant<std::string, float, int, std::function<void()>> Content;
+	typedef std::variant<std::shared_ptr<Tga::Text>, const char*> Interface;
 
-	class UIContent : public Component
+	class UIContent
 	{
-		friend class UIFactory;
-	public:
-		union Content {
-			std::string myText;
-			float myDecimal;
-			int myDigit;
-			std::function<void()> myEvent;
-		};
-		union Interface 
-		{
-			Tga::Text* myTextInterface;
-			const char* myImagePath;
-		};
-	public: //Setter and Getters
-		inline void AssignCanvas(UICanvas* aCanvas) { myCanvas = aCanvas; }
-		inline void Listen(std::function<void(UICanvas*, UIContent*)>* const anOnRenderCallback) { myRenderCall = anOnRenderCallback; }
-		inline Entity* const GetEntity() { return myEntity; }
-	public: //Core
+	public: //Render Logic
 		void Render();
-	public:
+	public: //Setters (with union specifiers)
 		template<typename Type>
 		inline void ApplyContent(const Type& someData) {};
 		template<>
 		inline void ApplyContent<std::string>(const std::string& someText)
 		{
-			myContent.myText = someText;
+			std::get<std::string>(myContent) = someText;
 		}
 		template<>
 		inline void ApplyContent<float>(const float& someDecimal)
 		{
-			myContent.myDecimal = someDecimal;
+			std::get<float>(myContent) = someDecimal;
 		}
 		template<>
 		inline void ApplyContent<int>(const int& someDigit)
 		{
-			myContent.myDigit = someDigit;
+			std::get<int>(myContent) = someDigit;
 		}
 		template<>
 		inline void ApplyContent<std::function<void()>>(const std::function<void()>& someCallback)
 		{
-			myContent.myEvent = someCallback;
+			std::get<std::function<void()>>(myContent) = someCallback;
 		}
 
-	private:
-		std::function<void(UICanvas*, UIContent*)>* myRenderCall;
-		UICanvas* myCanvas;
+	public:
+		inline Interface& EditInterface() { return myInterface; }
+
 	private://Data
 		Content myContent;
 		Interface myInterface;
+		/*	Content myContent;
+			Interface myInterface;*/
 	};
 }

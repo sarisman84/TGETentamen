@@ -37,6 +37,7 @@ namespace si
 		}
 		static inline void ResetDecentFlag() { ourInstance->myGroupReachedEdgeFlag = false; }
 		static inline std::function<void()>& OnAllWavesCleared() { return ourInstance->myOnAllWaveClearEvent; }
+		static inline const uint32_t GetWaveCount() { return ourInstance->myWaveCount; }
 		const bool IsWaveDead();
 	public: //Communicators
 		static void AddWave(const std::initializer_list<WaveSlot>& someEnemies);

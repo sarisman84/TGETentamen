@@ -5,7 +5,7 @@ namespace si
 	class InGameHUD : public UICanvas
 	{
 	public:
-		void OnInit() override;
+		void OnUpdate(const float aDT) override;
 	};
 
 }

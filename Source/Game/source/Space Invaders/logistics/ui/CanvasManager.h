@@ -6,71 +6,97 @@
 #include <typeinfo>
 #include <functional>
 #include <tge/math/vector2.h>
+#include <tge/math/color.h>
 
 namespace si
 {
 	class UICanvas;
+	class UIContent;
+
+
+
+	namespace Canvas
+	{
+		class CanvasContext
+		{
+		public: //Logistics
+			friend void Update(const float aDT);
+			friend void Render();
+		public: //Core Accessors/tools for Canvases
+			friend void RegisterCanvas(const uint32_t anID, UICanvas* const aCanvas);
+			friend void TransitionTo(const uint32_t anID, const bool aKeepUpdatingPreviousCanvas = false, const bool aKeepRenderingPreviousCanvas = false);
+			friend void TransitionBack();
+			friend void ResetTo(const uint32_t anID);
+		private:
+			template<typename Key>
+			friend uint32_t CalculateKey(const Key aKey);
+		private:
+			std::stack<uint32_t> myCanvasStack;
+			std::stack<uint32_t> myRenderStack;
+			std::unordered_map<uint32_t, std::unique_ptr<UICanvas>> myCanvases;
+		};
+		inline CanvasContext canvasContext;
+
+		void Init();
+
+		template<typename Type, typename TCanvas>
+		void RegisterCanvas(const Type aType, TCanvas* const aCanvas)
+		{
+			uint32_t key = Canvas::CalculateKey(aType);
+			Canvas::RegisterCanvas(key, dynamic_cast<UICanvas* const>(aCanvas));
+		}
+
+		template<typename Type>
+		void TransitionTo(const uint32_t anID, const bool aKeepUpdatingPreviousCanvas = false, const bool aKeepRenderingPreviousCanvas = false) {
+			uint32_t key = Canvas::CalculateKey(aType);
+			Canvas::TransitionTo(key, aKeepUpdatingPreviousCanvas, aKeepRenderingPreviousCanvas);
+		}
+
+		template<typename Type>
+		void ResetTo(const Type aType) {
+			uint32_t key = Canvas::CalculateKey(aType);
+			Canvas::ResetTo(key);
+		}
+
+		template<typename Key>
+		uint32_t CalculateKey(const Key aKey)
+		{
+			static_assert(std::is_enum<Key>::value, "Corresponding type is not an enum!");
+
+			uint32_t id = static_cast<uint32_t>(typeid(Key).hash_code());
+			uint32_t key = static_cast<uint32_t>(aKey);
+			return id + key;
+		}
+
+	}
 
 	namespace UI
 	{
-		uint32_t currentCanvas;
-		std::unordered_map<uint32_t, std::shared_ptr<UICanvas>> canvases;
-		std::stack<uint32_t> updateStack;
-		std::stack<uint32_t> renderStack;
-
-		template<typename CanvasKey, typename Type>
-		void RegisterCanvas(const CanvasKey aKey);
-		void RegisterCanvas(const uint32_t anID, UICanvas* aCanvas);
-
-		template<typename CanvasKey>
-		void TransitionToCanvas(const CanvasKey aKey, const bool anUpdatePreviousCanvas = false, const bool aRenderPreviousCanvas = false);
-		void TransitionToCanvas(const uint32_t anID, const bool anUpdatePreviousCanvas, const bool aRenderPreviousCanvas);
-
-		void TransitionBack();
-
-		template<typename CanvasKey>
-		void ResetToCanvas(const CanvasKey aKey);
-		void ResetToCanvas(const uint32_t anID);
-
-
-		void UpdateCanvasStack(const float aDT);
-		void RenderCanvasStack();
-
-
-		template<typename CanvasKey, typename Type>
-		void RegisterCanvas(const CanvasKey aKey)
+		class IMGuiContext
 		{
-			uint32_t id = static_cast<uint32_t>(typeid(CanvasKey).hash_code());
-			uint32_t key = static_cast<uint32_t>(aKey);
-			si::RegisterCanvas(id + key, new Type());
-		}
+		private:
+			void InitText();
 
-		template<typename CanvasKey>
-		void TransitionToCanvas(const CanvasKey aKey, const bool anUpdatePreviousCanvas, const bool aRenderPreviousCanvas)
-		{
-			uint32_t id = static_cast<uint32_t>(typeid(CanvasKey).hash_code());
-			uint32_t key = static_cast<uint32_t>(aKey);
-			UI::TransitionTo(id + key, anUpdatePreviousCanvas, aRenderPreviousCanvas);
-		}
+		private: //Data to handle gui elements
+			std::unordered_map<uint32_t, std::vector<std::shared_ptr<UIContent>>> myGuiContent;
+			uint32_t myCurrentCanvasID;
+			uint32_t myLocalID;
+		private://Friends <3
+			friend void Begin(UICanvas* const aCanvasPtr);
+			friend void Text(std::string someText, Tga::Vector2f aPosition, Tga::Color aColor = Tga::Color(1, 1, 1, 1));
+			friend void End();
+			friend void Init();
+		private: //Getters/Setters
+			friend std::unordered_map<uint32_t, std::vector<std::shared_ptr<UIContent>>>& GuiContent();
+		};
+		inline IMGuiContext imguiContext;
 
-		template<typename CanvasKey>
-		void ResetToCanvas(const CanvasKey aKey)
-		{
-			static_assert(std::is_enum<CanvasKey>::value, "Test");
-
-			uint32_t id = static_cast<uint32_t>(typeid(CanvasKey).hash_code());
-			uint32_t key = static_cast<uint32_t>(aKey);
-			UI::ResetToCanvas(id + key);
-		}
-
-
-		void Begin(UICanvas* const aCanvas);
+		void Init();
+		void Begin(UICanvas* const aCanvasPtr);
+		void Text(std::string someText, Tga::Vector2f aPosition, Tga::Color aColor);
 		void End();
-		void Text(const std::string& someText, Tga::Vector2f aPosition);
-		void Button(const std::string& someText, Tga::Vector2f aPosition, std::function<void()> aCallback);
 
-		Tga::Vector2f GetViewSize();
-
+		const Tga::Vector2f GetViewSize();
 
 	}
 

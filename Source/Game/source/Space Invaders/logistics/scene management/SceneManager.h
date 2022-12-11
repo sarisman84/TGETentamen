@@ -15,17 +15,14 @@ namespace si
 		static void Render();
 	public:
 		static Scene* const GetCurrentScene();
-		static Scene* const GetUIScene();
 	private:
 		void LoadSceneFromFile(const std::string& aPath);
 		Scene*& CurrentScene();
-		Scene*& UIScene();
 		const bool IsEmpty() const;
 		const bool IsUIEmpty() const;
 	private:
 		std::unordered_map<std::string, Scene*> mySceneRegistry;
 		std::string myCurrentScene = "empty";
-		std::string myCurrentUIScene = "empty";
 	private:
 		inline static SceneManager* ourInstance;
 	};

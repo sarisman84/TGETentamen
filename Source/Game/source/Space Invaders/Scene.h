@@ -49,7 +49,6 @@ namespace si
 		std::unordered_map<uint32_t, std::shared_ptr<Entity>> myEntities;
 		std::unordered_map<uint32_t, Tga::SpriteSharedData> myVisualEntities;
 		std::unordered_map<uint32_t, Collider*> myColliders;
-		std::unordered_map<uint32_t, UIContent*> myUIElements;
 
 	private: //Logistics
 		Tga::SpriteDrawer* myRenderer;

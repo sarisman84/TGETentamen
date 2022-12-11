@@ -1,127 +1,171 @@
 #include "CanvasManager.h"
 #include "framework/UICanvas.h"
 
-#include "../factories/UIFactory.h"
 #include "../../Entity.h"
 #include "../scene management/SceneManager.h"
+#include "../logging/Logger.h"
 
 #include <tge/engine.h>
-
+#include <tge/text/text.h>
+#include "framework/UIContent.h"
 
 namespace si
 {
 	namespace UI
 	{
-		void RegisterCanvas(const uint32_t anID, UICanvas* aCanvas)
+		void Init()
 		{
-			canvases[anID] = std::shared_ptr<UICanvas>(aCanvas);
+			imguiContext = IMGuiContext();
+			imguiContext.myCurrentCanvasID = UINT32_MAX;
 		}
-
-		void TransitionToCanvas(const uint32_t anID, const bool anUpdatePreviousCanvas, const bool aRenderPreviousCanvas)
+		std::unordered_map<uint32_t, std::vector<std::shared_ptr<UIContent>>>& GuiContent()
 		{
-
-
-
-			if (!anUpdatePreviousCanvas)
+			return imguiContext.myGuiContent;
+		}
+		void Begin(UICanvas* const aCanvasPtr)
+		{
+			if (!aCanvasPtr)
 			{
-				uint32_t prevKey = updateStack.top();
-				canvases[prevKey]->OnTransitionExit();
-				updateStack.pop();
+				ERROR_LOG("No Canvas found! Exiting");
+				return;
 			}
 
-			if (!aRenderPreviousCanvas)
-				renderStack.pop();
-
-			canvases[anID]->OnTransitionEnter();
-			updateStack.push(anID);
-			renderStack.push(anID);
+			imguiContext.myCurrentCanvasID = aCanvasPtr->GetID();
+			imguiContext.myLocalID = 0;
 		}
-
-		void TransitionBack()
+		void Text(std::string someText, Tga::Vector2f aPosition, Tga::Color aColor)
 		{
-			if (!updateStack.empty())
-				updateStack.pop();
-
-			if (!renderStack.empty())
-				renderStack.pop();
-		}
-
-		void ResetToCanvas(const uint32_t anID)
-		{
-			while (!updateStack.empty())
-				updateStack.pop();
-
-			while (!renderStack.empty())
-				renderStack.pop();
-
-			TransitionToCanvas(anID, false, false);
-		}
-
-		void UpdateCanvasStack(const float aDT)
-		{
-			auto cpy = updateStack;
-
-			while (!cpy.empty())
+			//If this is called in an non-canvas enviroment, exit
+			if (imguiContext.myCurrentCanvasID == UINT32_MAX)
 			{
-				canvases[cpy.top()]->OnUpdate(aDT);
-				cpy.pop();
+				ERROR_LOG("Attempting to render text in a non-canvas enviroment!");
+				return;
 			}
-		}
-
-		void RenderCanvasStack()
-		{
-			auto cpy = renderStack;
-
-			while (!cpy.empty())
+			if (imguiContext.myGuiContent.count(imguiContext.myCurrentCanvasID) == 0 ||
+				imguiContext.myLocalID >= imguiContext.myGuiContent[imguiContext.myCurrentCanvasID].size())
 			{
-				canvases[cpy.top()]->Render();
-				cpy.pop();
+				LOG("Text Element missing: Initializing.");
+				//Initialize element
+				imguiContext.InitText();
 			}
-		}
-		void Begin(UICanvas* const aCanvas)
-		{
-			currentCanvas = aCanvas->GetID();
+
+			//Apply its content
+			auto content = imguiContext.myGuiContent[imguiContext.myCurrentCanvasID][imguiContext.myLocalID];
+			auto textInt = std::get <std::shared_ptr<Tga::Text>>(content->EditInterface());
+			textInt->SetColor(aColor);
+			textInt->SetPosition(aPosition);
+			textInt->SetText(someText);
+
+			imguiContext.myLocalID++;
 		}
 		void End()
 		{
-			currentCanvas = UINT32_MAX;
+			imguiContext.myCurrentCanvasID = UINT32_MAX;
 		}
-		void Text(const std::string& someText, Tga::Vector2f aPosition)
-		{
-			if (currentCanvas == UINT32_MAX) return;
 
-			auto& scene = *SceneManager::GetUIScene();
-
-
-
-
-			UIContent* content = UIFactory::GetElement(UIType::Text);
-			content->AssignCanvas(canvases[currentCanvas].get());
-			content->ApplyContent(someText);
-			content->GetEntity()->myTransform.Position() = Tga::Vector3f(aPosition.x, aPosition.y, 0);
-		}
-		void Button(const std::string& someText, Tga::Vector2f aPosition, std::function<void()> aCallback)
-		{
-			if (currentCanvas == UINT32_MAX) return;
-
-			UIContent* content = UIFactory::GetElement(UIType::Button);
-			content->AssignCanvas(canvases[currentCanvas].get());
-			content->ApplyContent(someText);
-			content->ApplyContent(aCallback);
-			content->GetEntity()->myTransform.Position() = Tga::Vector3f(aPosition.x, aPosition.y, 0);
-		}
-		Tga::Vector2f GetViewSize()
+		const Tga::Vector2f GetViewSize()
 		{
 			auto engine = Tga::Engine::GetInstance();
-			auto res = engine->GetRenderSize();
-			return Tga::Vector2f(static_cast<float>(res.x), static_cast<float>(res.y));
+			return Tga::Vector2f(static_cast<float>(engine->GetRenderSize().x), static_cast<float>(engine->GetRenderSize().y));
 		}
-		void RegisterCanvas(const uint32_t anID, UICanvas* aCanvas)
+
+		void IMGuiContext::InitText()
 		{
-			canvases[anID] = std::shared_ptr<UICanvas>(aCanvas);
+			uint32_t key = imguiContext.myCurrentCanvasID;
+			auto content = std::make_shared<UIContent>();
+			auto text = std::get<std::shared_ptr<Tga::Text>>(content->EditInterface()) = std::make_shared<Tga::Text>();
+			imguiContext.myGuiContent[key].push_back(content);
+			LOG("Created Text Element!");
 		}
 	}
 }
 
+void si::Canvas::RegisterCanvas(const uint32_t anID, UICanvas* const aCanvas)
+{
+	aCanvas->OnInit();
+	canvasContext.myCanvases[anID].reset(aCanvas);
+}
+
+void si::Canvas::TransitionTo(const uint32_t anID, const bool aKeepUpdatingPreviousCanvas, const bool aKeepRenderingPreviousCanvas)
+{
+	if (!canvasContext.myCanvasStack.empty())
+		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
+
+	if (!aKeepUpdatingPreviousCanvas && !canvasContext.myCanvasStack.empty()) {
+		canvasContext.myCanvasStack.pop();
+	}
+	canvasContext.myCanvasStack.push(anID);
 
 
+	if (!aKeepRenderingPreviousCanvas && !canvasContext.myRenderStack.empty()) {
+		canvasContext.myRenderStack.pop();
+	}
+	canvasContext.myRenderStack.push(anID);
+
+	canvasContext.myCanvases[anID]->OnTransitionEnter();
+}
+
+void si::Canvas::TransitionBack()
+{
+	if (!canvasContext.myRenderStack.empty())
+	{
+		canvasContext.myRenderStack.pop();
+	}
+
+	if (!canvasContext.myCanvasStack.empty())
+	{
+		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
+		canvasContext.myCanvasStack.pop();
+	}
+	if (!canvasContext.myCanvasStack.empty())
+		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionEnter();
+}
+
+void si::Canvas::ResetTo(const uint32_t anID)
+{
+	while (!canvasContext.myCanvasStack.empty())
+	{
+		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
+		canvasContext.myCanvasStack.pop();
+	}
+
+	while (!canvasContext.myRenderStack.empty())
+	{
+		canvasContext.myRenderStack.pop();
+	}
+
+	TransitionTo(anID);
+}
+
+void si::Canvas::Init()
+{
+	canvasContext = CanvasContext();
+}
+
+void si::Canvas::Update(const float aDT)
+{
+	auto stack = canvasContext.myCanvasStack;
+	while (!stack.empty())
+	{
+		auto index = stack.top();
+		stack.pop();
+
+		canvasContext.myCanvases[index]->OnUpdate(aDT);
+	}
+}
+
+void si::Canvas::Render()
+{
+	auto stack = canvasContext.myRenderStack;
+	while (!stack.empty())
+	{
+		auto index = stack.top();
+		stack.pop();
+
+		auto& elements = UI::GuiContent()[canvasContext.myCanvases[index]->GetID()];
+		for (auto& element : elements)
+		{
+			element->Render();
+		}
+	}
+}

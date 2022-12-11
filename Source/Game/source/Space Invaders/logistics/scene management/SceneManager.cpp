@@ -27,14 +27,11 @@ si::SceneManager::SceneManager()
 	ourInstance = this;
 }
 
-void si::SceneManager::RegisterScene(const std::string& aName, Scene* const aNewScene, const bool aRegisterAsUIFlag)
+void si::SceneManager::RegisterScene(const std::string& aName, Scene* const aNewScene, const bool /*aRegisterAsUIFlag*/)
 {
-	std::string key = aRegisterAsUIFlag ? "ui_" + aName : aName;
+	std::string key = aName;
 	ourInstance->mySceneRegistry[key] = aNewScene;
-	if (aRegisterAsUIFlag)
-		ourInstance->myCurrentUIScene = key;
-	else
-		ourInstance->myCurrentScene = key;
+	ourInstance->myCurrentScene = key;
 }
 
 void si::SceneManager::LoadScene(const std::string& aName)
@@ -74,10 +71,7 @@ si::Scene* const si::SceneManager::GetCurrentScene()
 	return ourInstance->CurrentScene();
 }
 
-si::Scene* const si::SceneManager::GetUIScene()
-{
-	return ourInstance->UIScene();
-}
+
 
 
 std::wstring ToWideChar(const std::string& aVal)
@@ -94,7 +88,7 @@ void si::SceneManager::LoadSceneFromFile(const std::string& aPath)
 	std::string path = sceneFolder + aPath;
 	std::ifstream sceneIfs(Tga::Settings::GetAssetW(path));
 
-	if (sceneIfs.bad()) 
+	if (sceneIfs.bad())
 	{
 		ERROR_LOG("Could not find scene " + aPath + " at " + sceneFolder);
 		return;
@@ -177,19 +171,13 @@ si::Scene*& si::SceneManager::CurrentScene()
 	return mySceneRegistry[myCurrentScene];
 }
 
-si::Scene*& si::SceneManager::UIScene()
-{
-	return mySceneRegistry[myCurrentUIScene];
-}
+
 
 const bool si::SceneManager::IsEmpty() const
 {
 	return myCurrentScene == "empty";
 }
 
-const bool si::SceneManager::IsUIEmpty() const
-{
-	return myCurrentUIScene == "empty";
-}
+
 
 
