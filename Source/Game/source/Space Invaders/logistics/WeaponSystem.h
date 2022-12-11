@@ -12,6 +12,7 @@ namespace si
 		uint32_t myOwnerID;
 		Tga::Vector2f mySpawnPos;
 		Tga::Vector2f myDirection;
+		float myBulletVelocity;
 		float myColliderRadius;
 		float myDamage;
 		const wchar_t* myTexture;

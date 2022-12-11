@@ -5,23 +5,40 @@
 #include "../8BitActor.h"
 
 #include "../../logistics/ai/EnemyManager.h"
-
+#include "../../logistics/WeaponSystem.h"
 
 void si::EnemyController::Init()
 {
 	myActor = myEntity->GetComponent<EightBitActor>();
 	myHealthInteractor = myEntity->GetComponent<HealthInteractor>();
 	myGeneralBulletInfo.myOwnerID = myEntity->GetUUID();
+
+	myFireRate = 0.75f;
+	myCurFireRate = myFireRate;
 }
 
-void si::EnemyController::Update(const float /*aDT*/)
+void si::EnemyController::Update(const float aDT)
 {
 	if (!myActor) return;
 	myActor->myPositionOffset = WaveManager::GetGroupVelocity();
 
-	if (myActor->GetPreviousPosition().y != myEntity->myTransform.Position().y) 
+
+	if (myActor->GetPreviousPosition().y != myEntity->myTransform.Position().y)
 	{
 		WaveManager::ResetDecentFlag();
+	}
+
+	if (myGeneralBulletInfo.myBulletVelocity == 0) return;
+
+	myCurFireRate -= aDT;
+
+	if (myCurFireRate <= 0)
+	{
+		auto pos = myEntity->myTransform.Position();
+		myGeneralBulletInfo.myDirection = { 0.0f, -1.0f };
+		myGeneralBulletInfo.mySpawnPos = Tga::Vector2f(pos.x, pos.y) - Tga::Vector2f(0.0f, (myEntity->mySprite.mySize.y / 2.0f) + 50.0f);
+		WeaponSystem::Fire(myEntity->myCurrentScene, myGeneralBulletInfo);
+		myCurFireRate = myFireRate;
 	}
 }
 

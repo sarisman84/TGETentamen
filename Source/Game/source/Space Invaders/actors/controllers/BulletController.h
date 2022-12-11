@@ -13,6 +13,7 @@ namespace si
 		void Update(const float aDT) override;
 	public:
 		void SetDirection(const Tga::Vector2f& aDirection);
+		void SetVelocity(const float aVelocity);
 		inline Collider* const GetCollider() { return myCollider; }
 		inline void SetDamage(const float aDamageVal) { myDamage = aDamageVal; }
 		inline void SetOwnerID(const uint32_t anID) { myOwnerID = anID; }
@@ -25,6 +26,7 @@ namespace si
 	private:
 		float myDamage;
 		Tga::Vector2f myVelocity;
+		float myMovementSpeed;
 		uint32_t myOwnerID;
 
 

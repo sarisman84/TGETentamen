@@ -15,6 +15,7 @@ namespace si
 		const Tga::Vector2f GetNextPosition() const;
 	public: //Public Variables
 		Tga::Vector2f myVelocity;
+		float myMovementSpeed;
 	
 	
 	};

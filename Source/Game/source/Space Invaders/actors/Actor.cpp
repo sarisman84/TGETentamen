@@ -13,7 +13,7 @@ void si::Actor::Init()
 
 void si::Actor::Update(const float aDT)
 {
-	myEntity->myTransform.Position() += Tga::Vector3f(myVelocity.x, myVelocity.y, 0.0f) * aDT;
+	myEntity->myTransform.Position() += Tga::Vector3f(myVelocity.x, myVelocity.y, 0.0f) * myMovementSpeed * aDT;
 }
 
 const bool si::Actor::IsInRenderView() const
@@ -38,6 +38,6 @@ const bool si::Actor::IsInRenderView() const
 const Tga::Vector2f si::Actor::GetNextPosition() const
 {
 	auto engine = Tga::Engine::GetInstance();
-	Tga::Vector3f pos = myEntity->myTransform.Position() + Tga::Vector3f(myVelocity.x, myVelocity.y, 0.0f) * engine->GetDeltaTime();
+	Tga::Vector3f pos = myEntity->myTransform.Position() + Tga::Vector3f(myVelocity.x, myVelocity.y, 0.0f) * myMovementSpeed * engine->GetDeltaTime();
 	return { pos.x, pos.y };
 }

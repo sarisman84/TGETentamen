@@ -10,10 +10,10 @@ namespace si
 
 	enum class Key : int
 	{
-		A = 0x41,
-		S = 0x53,
-		D = 0x44,
-		W = 0x57,
+		Left = VK_LEFT,
+		Down = VK_UP,
+		Right = VK_RIGHT,
+		Up = VK_DOWN,
 		Space = VK_SPACE,
 		Escape = VK_ESCAPE,
 		P = 0x50
@@ -24,13 +24,25 @@ namespace si
 	public:
 		void Awake() override;
 		void Update(const float aDT) override;
+	public:
+		inline const int GetCurrentAmmo() { return myCurrentMagazine; }
+		inline const bool IsReloading() { return myReloadFlag; }
 	private: //Movement
-		EightBitActor* myActor;
+		EightBitActor* myEightBitActor;
+		Actor* myActor;
 		float myMovementSpeed;
 	private: //Weapon Logic
 		float myFireRate = 0.25f;
 		float myCurFireRate = 0.0f;
 		Bullet myBulletInfo;
-		
+
+		int myMagazine;
+		float myReloadTime;
+
+		int myCurrentMagazine;
+		float myCurrReloadTime;
+	private: //States
+		bool myReloadFlag;
+
 	};
 }

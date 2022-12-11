@@ -12,7 +12,8 @@
 
 void si::InputController::Awake()
 {
-	myActor = &myEntity->AddComponent<EightBitActor>();
+	myActor = &myEntity->AddComponent<Actor>();
+	//myEightBitActor = &myEntity->AddComponent<EightBitActor>();
 	auto& col = myEntity->AddComponent<Collider>();
 	auto& hi = myEntity->AddComponent< HealthInteractor>();
 
@@ -25,44 +26,73 @@ void si::InputController::Awake()
 
 
 	myBulletInfo.myColliderRadius = 10.0f;
-	myBulletInfo.myDirection = { 0.0f, 150.0f };
+	myBulletInfo.myDirection = { 0.0f, 1.0f };
 	myBulletInfo.myDamage = 1.0f;
+	myBulletInfo.myBulletVelocity = 350.0f;
 	myBulletInfo.myTexture = L"Textures/shot1.dds";
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
 	myFireRate = 0.25f;
 
-	myActor->myMovementSpeed = myMovementSpeed;
+	//myEightBitActor->myMovementSpeed = myMovementSpeed;
+	myActor->myMovementSpeed = myMovementSpeed * 1000.0f;
 
+
+	myMagazine = 5;
+	myReloadTime = 1.5f;
+
+
+	myCurrentMagazine = myMagazine;
+	myCurrReloadTime = myReloadTime;
 
 }
 
 void si::InputController::Update(const float aDT)
 {
 	myCurFireRate += aDT;
-	myActor->myPositionOffset = { 0,0 };
+	//myEightBitActor->myPositionOffset = { 0,0 };
+	myActor->myVelocity = { 0,0 };
 
+	if (GetAsyncKeyState((int)Key::Left))
+		//myEightBitActor->myPositionOffset = Tga::Vector2f{ -1.0f, 0.0f };
+		myActor->myVelocity = Tga::Vector2f(-1.0f, 0.0f);
+	if (GetAsyncKeyState((int)Key::Right))
+		//myEightBitActor->myPositionOffset = Tga::Vector2f{ 1.0f, 0.0f };
+		myActor->myVelocity = Tga::Vector2f(1.0f, 0.0f);
 
-	if (GetAsyncKeyState((int)Key::A))
-		myActor->myPositionOffset = Tga::Vector2f{ -1.0f, 0.0f };
-	if (GetAsyncKeyState((int)Key::D))
-		myActor->myPositionOffset = Tga::Vector2f{ 1.0f, 0.0f };
-
-	if (GetAsyncKeyState((int)Key::Space) && myCurFireRate >= myFireRate)
+	if (GetAsyncKeyState((int)Key::Space) && myCurFireRate >= myFireRate && myCurrentMagazine > 0)
 	{
+		myCurrentMagazine--;
+
 		auto pos = myEntity->myTransform.Position();
 		myBulletInfo.mySpawnPos = { pos.x, pos.y };
 		WeaponSystem::Fire(myEntity->myCurrentScene, myBulletInfo);
 		myCurFireRate = 0;
 	}
+	if (myCurrentMagazine <= 0) //If we are out of ammo, reload
+	{
+		myReloadFlag = true;
+		myCurrReloadTime -= aDT;
+
+		if (myCurrReloadTime <= 0) //if we have finished reloading, refill the magazine.
+		{
+			myReloadFlag = false;
+			myCurrReloadTime = myReloadTime;
+			myCurrentMagazine = myMagazine;
+		}
+	}
 
 
-	auto pos = myActor->GetNextPosition();
+
+
+
+	auto pos = myActor->GetNextPosition(); //myEightBitActor->GetNextPosition();
 	auto size = myEntity->mySprite.mySize / 2.0f;
 
 	auto engine = Tga::Engine::GetInstance();
 	auto res = engine->GetRenderSize();
 
 	if (pos.x - size.x < 0 || pos.x + size.x > res.x)
-		myActor->myPositionOffset = { 0.0f, 0.0f };
+		//myEightBitActor->myPositionOffset = { 0.0f, 0.0f };
+		myActor->myVelocity = Tga::Vector2f(0.0f, 0.0f);
 
 }

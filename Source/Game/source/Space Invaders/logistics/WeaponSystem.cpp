@@ -12,7 +12,7 @@ const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 	entity->mySprite.mySizeOffset = { 1,1 };
 	auto bc = &entity->AddComponent<BulletController>();
 
-
+	bc->SetVelocity(someInformation.myBulletVelocity);
 	bc->SetOwnerID(someInformation.myOwnerID);
 	bc->SetDirection(someInformation.myDirection);
 	bc->SetDamage(someInformation.myDamage);

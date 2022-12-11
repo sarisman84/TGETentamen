@@ -31,6 +31,7 @@ void si::BulletController::Update(const float /*aDT*/)
 {
 	auto engine = Tga::Engine::GetInstance();
 	myActor->myVelocity = myVelocity;
+	myActor->myMovementSpeed = myMovementSpeed;
 
 	if (myActor->GetNextPosition().y >= engine->GetRenderSize().y)
 	{
@@ -41,6 +42,11 @@ void si::BulletController::Update(const float /*aDT*/)
 void si::BulletController::SetDirection(const Tga::Vector2f& aDirection)
 {
 	myVelocity = aDirection;
+}
+
+void si::BulletController::SetVelocity(const float aVelocity)
+{
+	myMovementSpeed = aVelocity;
 }
 
 void si::BulletController::DestroySelf()

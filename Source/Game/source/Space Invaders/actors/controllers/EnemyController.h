@@ -24,6 +24,9 @@ namespace si
 		HealthInteractor* myHealthInteractor;
 		Bullet myGeneralBulletInfo;
 		uint32_t myEnemyID;
+	private: //Weapon Data
+		float myFireRate;
+		float myCurFireRate;
 
 	};
 

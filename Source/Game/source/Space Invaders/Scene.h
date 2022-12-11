@@ -36,12 +36,17 @@ namespace si
 		void MarkForDelete(const uint32_t anUUID);
 		void ClearGarbage();
 
+
+		template<typename Type>
+		Type* SearchForComponent();
+
 	public: //State Managemnet
 		const bool IsActive() const;
 		void SetActive(const bool aNewState);
 	public: //Accessors
 		std::unordered_map<uint32_t, Collider*>& GetColliders() { return myColliders; }
 	private:
+
 		void ExecuteComponent(std::vector<std::shared_ptr<Component>>& someComponents, void(*anOnComponentExecute)(const float, Component*), const float aDT = 0);
 
 	private: //Entity Containers
@@ -56,4 +61,15 @@ namespace si
 	private: //Other
 		bool myActiveState;
 	};
+
+	template<typename Type>
+	inline Type* Scene::SearchForComponent()
+	{
+		for (auto& entity : myEntities)
+		{
+			if (auto comp = entity.second->GetComponent<Type>())
+				return comp;
+		}
+		return nullptr;
+	}
 }
