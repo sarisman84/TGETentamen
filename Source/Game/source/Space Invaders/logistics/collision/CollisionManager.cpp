@@ -9,7 +9,7 @@ void si::CollisionManager::HandleCollisions(Scene* const aScene)
 
 	auto& colliders = aScene->GetColliders();
 
-
+	if (colliders.size() == 0) return;
 
 	for (auto nextItA = colliders.begin(), itA = nextItA++; nextItA != colliders.end(); ++itA, ++nextItA)
 	{

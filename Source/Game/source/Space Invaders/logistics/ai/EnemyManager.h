@@ -46,10 +46,12 @@ namespace si
 		static void Start();
 		static void Reset();
 		static void Update(const float aDT);
+		static const bool IsGameOver();
 	private:
 		void LoadWavesImpl(const std::string& aPath);
 		void UpdateWave();
 		void SpawnWave();
+		void KillRestOfWaves();
 	private:
 		void GetFurthestEnemiesOnEdges(Scene* const aScene);
 

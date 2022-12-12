@@ -16,6 +16,7 @@ namespace si
 		float myColliderRadius;
 		float myDamage;
 		const wchar_t* myTexture;
+		unsigned char myCollisionLayer = 1; //Default layer
 	};
 
 

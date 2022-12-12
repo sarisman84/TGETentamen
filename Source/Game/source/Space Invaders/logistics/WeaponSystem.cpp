@@ -10,6 +10,16 @@ const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 	entity->myTransform.Position() = someInformation.mySpawnPos;
 	entity->mySprite.mySpritePath = someInformation.myTexture;
 	entity->mySprite.mySizeOffset = { 1,1 };
+	if ((*aScene)[someInformation.myOwnerID] && (*aScene)[someInformation.myOwnerID]->myName)
+	{
+		std::string ownerName((*aScene)[someInformation.myOwnerID]->myName);
+		entity->myName = std::string("Bullet [" + ownerName + "]").c_str();
+	}
+	else
+	{
+		entity->myName = "Bullet";
+	}
+
 	auto bc = &entity->AddComponent<BulletController>();
 
 	bc->SetVelocity(someInformation.myBulletVelocity);
@@ -17,8 +27,11 @@ const bool si::WeaponSystem::Fire(Scene* aScene, const Bullet& someInformation)
 	bc->SetDirection(someInformation.myDirection);
 	bc->SetDamage(someInformation.myDamage);
 
+
 	auto col = &entity->AddComponent<Collider>();
 	col->myCollisionRadius = someInformation.myColliderRadius;
+	col->myCollisionLayer = someInformation.myCollisionLayer;
+	col->myCollisionLayer |= static_cast<uint32_t>(Layer::Shelter);
 	bc->RegisterCollider(col);
 
 	(*aScene) += entity;

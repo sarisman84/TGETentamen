@@ -5,6 +5,13 @@
 #include "../Actor.h"
 #include "../../logistics/collision/Collider.h"
 #include "../../logistics/interaction/HealthInteractor.h"
+
+#include "Space Invaders/logistics/ai/EnemyManager.h"
+#include "Space Invaders/logistics/ui/CanvasManager.h"
+#include "Space Invaders/logistics/scene management/SceneManager.h"
+
+#include "Space Invaders/logistics/ui/canvases/CanvasTypes.h"
+
 #include <tge/engine.h>
 
 #include <iostream>
@@ -12,14 +19,22 @@
 
 void si::InputController::Awake()
 {
+	myEntity->myName = "Player";
 	myActor = &myEntity->AddComponent<Actor>();
 	//myEightBitActor = &myEntity->AddComponent<EightBitActor>();
 	auto& col = myEntity->AddComponent<Collider>();
+	col.myCollisionLayer = static_cast<unsigned char>(Layer::Player);
 	auto& hi = myEntity->AddComponent< HealthInteractor>();
+	hi.OnDeathEvent() = [this]()
+	{
+		WaveManager::Reset();
+		SceneManager::LoadScene("mainMenu.json");
+		Canvas::ResetTo(CanvasTypes::GameOver);
+	};
 
-	hi.SetHealth(1);
+	hi.SetHealth(3);
 
-	col.myCollisionRadius = 45.0f;
+	col.myCollisionRadius = 15.0f;
 	myMovementSpeed = 0.25f;
 
 	myEntity->myTransform.Scale() = { 150.0f, 150.0f };
@@ -31,6 +46,7 @@ void si::InputController::Awake()
 	myBulletInfo.myBulletVelocity = 350.0f;
 	myBulletInfo.myTexture = L"Textures/shot1.dds";
 	myBulletInfo.myOwnerID = myEntity->GetUUID();
+	myBulletInfo.myCollisionLayer = static_cast<unsigned char>(Layer::Enemy);
 	myFireRate = 0.25f;
 
 	//myEightBitActor->myMovementSpeed = myMovementSpeed;

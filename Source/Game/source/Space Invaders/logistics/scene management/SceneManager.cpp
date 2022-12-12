@@ -4,6 +4,9 @@
 #include "../../actors/controllers/InputController.h"
 #include "../logging/Logger.h"
 
+#include <Space Invaders/logistics/interaction/HealthInteractor.h>
+#include <Space Invaders/logistics/collision/Collider.h>
+
 #include <tge/engine.h>
 #include <tge/settings/settings.h>
 
@@ -20,6 +23,7 @@
 #include <string>
 #include <Windows.h>
 
+
 #pragma warning(disable: 4267)
 
 si::SceneManager::SceneManager()
@@ -31,32 +35,42 @@ void si::SceneManager::RegisterScene(const std::string& aName, Scene* const aNew
 {
 	std::string key = aName;
 	ourInstance->mySceneRegistry[key] = aNewScene;
-	ourInstance->myCurrentScene = key;
 }
 
-void si::SceneManager::LoadScene(const std::string& aName)
+void si::SceneManager::LoadScene(const std::string& aName, const bool aFullLoadFlag)
 {
-	if (!ourInstance->IsEmpty()) //Disable the previous scene, should one have existed
-		ourInstance->CurrentScene()->SetActive(false);
+	Scene* oldScene = nullptr;
+	if (!ourInstance->IsEmpty())//Disable the previous scene, should one have existed
+	{
+		
+		oldScene = ourInstance->CurrentScene();
+		oldScene->OnUnload();
+		oldScene->SetActive(false);
+	}
+
 	auto& sceneReg = ourInstance->mySceneRegistry;
 
-	if (sceneReg.empty() || sceneReg.count(aName) == 0)
+	if (aFullLoadFlag || sceneReg.empty() || sceneReg.count(aName) == 0)
 	{
 		ourInstance->LoadSceneFromFile(aName);
 	}
 
+	
 	ourInstance->myCurrentScene = aName;
 	ourInstance->CurrentScene()->SetActive(true); //Enable the new scene
+
 }
 
 void si::SceneManager::Update(const float aDT)
 {
-	if (!ourInstance->IsEmpty())
+	if (!ourInstance) return;
+
+	for (auto& pair : ourInstance->mySceneRegistry)
 	{
-		auto& scene = ourInstance->CurrentScene();
+		auto& scene = pair.second;
 		scene->Update(aDT);
-		si::CollisionManager::HandleCollisions(scene);
 	}
+	si::CollisionManager::HandleCollisions(ourInstance->GetCurrentScene());
 
 }
 
@@ -156,6 +170,14 @@ void si::SceneManager::LoadSceneFromFile(const std::string& aPath)
 		{
 			if (comp["type"] == "InputController")
 				newEntity->AddComponent<InputController>();
+			if (comp["type"] == "HealthInteractor")
+			{
+				auto& hi = newEntity->AddComponent<HealthInteractor>();
+				hi.SetHealth(comp["data"]["durability"]);
+				auto& col = newEntity->AddComponent<Collider>();
+				col.myCollisionLayer = static_cast<unsigned char>(comp["data"]["layer"]);
+				col.myCollisionRadius = comp["data"]["hitboxRange"];
+			}
 		}
 
 		(*newScene) += newEntity;

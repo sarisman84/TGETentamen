@@ -26,10 +26,7 @@ si::Scene::Scene()
 
 void si::Scene::Init()
 {
-
-
 	auto& textureManager = myEngine->GetTextureManager();
-
 
 	for (auto& e : myEntities)
 	{
@@ -41,8 +38,9 @@ void si::Scene::Init()
 
 void si::Scene::Update(const float aDT)
 {
-	if (!myActiveState) return;
 	ClearGarbage();
+	if (!myUpdateState) return;
+
 
 	auto cpy = myEntities;
 	for (auto& e : cpy)
@@ -56,7 +54,7 @@ void si::Scene::Update(const float aDT)
 
 void si::Scene::Render()
 {
-	if (!myActiveState) return;
+	if (!myRenderState) return;
 	auto cpy = myVisualEntities;
 	for (auto& p : cpy)
 	{
@@ -139,11 +137,15 @@ void si::Scene::operator +=(const std::initializer_list<Entity*>& aList)
 
 si::Entity* si::Scene::operator[](const uint32_t anID)
 {
+	if (myEntities.count(anID) == 0)return nullptr;
 	return myEntities[anID].get();
 }
 
 void si::Scene::MarkForDelete(const uint32_t anUUID)
 {
+	auto& elm = myEntities[anUUID];
+
+	LOG("[System - Garbage Collection] Marked " + (elm ? (elm->myName ? elm->myName : "Unknown") : std::to_string(anUUID)) + " for garbage collection!");
 	myGarbageCollection.push_back(anUUID);
 }
 
@@ -155,10 +157,7 @@ void si::Scene::ClearGarbage()
 {
 	for (size_t i = 0; i < myGarbageCollection.size(); i++)
 	{
-
-
 		auto index = myGarbageCollection[i];
-
 		auto& elm = myEntities[index];
 
 		if (elm)
@@ -168,12 +167,14 @@ void si::Scene::ClearGarbage()
 
 				});
 
+		LOG("[System - Garbage Collection] Cleared entity [" + (elm ? (elm->myName ? elm->myName : "Unknown") : std::to_string(index) + " (Could not find Entity)") + "] (Sanity Check: " + std::to_string(myEntities.count(index)) + ")");
+
 		myEntities.erase(index);
 		myVisualEntities.erase(index);
 		myColliders.erase(index);
 
 
-		LOG("[System - Garbage Collection] Cleared entity " + std::to_string(index));
+
 
 		//#ifndef _RETAIL
 		//		std::cout << "[LOG][Scene::GarbageCollector]: Cleared entity " << index << "!\n";
@@ -183,12 +184,29 @@ void si::Scene::ClearGarbage()
 	myGarbageCollection.clear();
 }
 
+void si::Scene::OnUnload()
+{
+	LOG("Unloading Scene!");
+	ClearGarbage();
+}
+
 const bool si::Scene::IsActive() const
 {
-	return myActiveState;
+	return myRenderState && myUpdateState;
 }
 
 void si::Scene::SetActive(const bool aNewState)
 {
-	myActiveState = aNewState;
+	myRenderState = aNewState;
+	myUpdateState = aNewState;
+}
+
+void si::Scene::SetUpdateActive(const bool aNewState)
+{
+	myUpdateState = aNewState;
+}
+
+void si::Scene::SetRenderActive(const bool aNewState)
+{
+	myRenderState = aNewState;
 }

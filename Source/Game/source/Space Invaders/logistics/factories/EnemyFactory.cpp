@@ -15,6 +15,8 @@ si::EnemyFactory::EnemyFactory()
 	ourInstance = this;
 	EnemyBlueprint type1;
 	type1.myTexture = L"Textures/enemy1.dds";
+	type1.myBulletSpeed = 0;
+	type1.myPointAmm = 10.0f;
 	type1.myBulletTexture = L"";
 	type1.myHealthAmm = 1;
 	AddType(EnemyID::Tier0, type1);
@@ -28,7 +30,7 @@ si::EnemyFactory::EnemyFactory()
 	type2.myBulletSpeed = 150.0f;
 	type2.myBulletFireDir = Tga::Vector2f(0.0f, -1.0f);
 	type2.myBulletDamage = 1.0f;
-	type2.myBulletCollisionRadius = 45.0f;
+	type2.myBulletCollisionRadius = 15.0f;
 	type2.myPointAmm = 20.0f;
 	AddType(EnemyID::Tier1, type2);
 
@@ -40,7 +42,7 @@ si::EnemyFactory::EnemyFactory()
 	type3.myBulletSpeed = 175.0f;
 	type3.myBulletFireDir = Tga::Vector2f(0.0f, -1.0f);
 	type3.myBulletDamage = 1.0f;
-	type3.myBulletCollisionRadius = 30.0f;
+	type3.myBulletCollisionRadius = 15.0f;
 	type3.myPointAmm = 40.0f;
 	AddType(EnemyID::Tier2, type3);
 
@@ -64,6 +66,7 @@ si::Entity* const si::EnemyFactory::GetEnemy(const uint32_t anEnemyType)
 	auto& healthInteractor = newEnemy->AddComponent<HealthInteractor>();
 	auto& actor = newEnemy->AddComponent<EightBitActor>();
 	auto& collider = newEnemy->AddComponent<Collider>();
+	collider.myCollisionLayer = static_cast<unsigned char>(Layer::Enemy);
 	auto& bullet = enemyController.WeaponInfo();
 
 	collider.myCollisionRadius = 45.0f;

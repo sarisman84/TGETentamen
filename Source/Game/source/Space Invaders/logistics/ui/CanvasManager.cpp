@@ -44,7 +44,7 @@ namespace si
 			if (imguiContext.myGuiContent.count(imguiContext.myCurrentCanvasID) == 0 ||
 				imguiContext.myLocalID >= imguiContext.myGuiContent[imguiContext.myCurrentCanvasID].size())
 			{
-				LOG("Text Element missing: Initializing.");
+				//LOG("Text Element missing: Initializing.");
 				//Initialize element
 				imguiContext.InitText();
 			}
@@ -75,7 +75,7 @@ namespace si
 			auto content = std::make_shared<UIContent>();
 			auto text = std::get<std::shared_ptr<Tga::Text>>(content->EditInterface()) = std::make_shared<Tga::Text>();
 			imguiContext.myGuiContent[key].push_back(content);
-			LOG("Created Text Element!");
+			//LOG("Created Text Element!");
 		}
 	}
 }
@@ -89,18 +89,13 @@ void si::Canvas::RegisterCanvas(const uint32_t anID, UICanvas* const aCanvas)
 void si::Canvas::TransitionTo(const uint32_t anID, const bool aKeepUpdatingPreviousCanvas, const bool aKeepRenderingPreviousCanvas)
 {
 	if (!canvasContext.myCanvasStack.empty())
-		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
-
-	if (!aKeepUpdatingPreviousCanvas && !canvasContext.myCanvasStack.empty()) {
-		canvasContext.myCanvasStack.pop();
+	{
+		auto key = std::get<uint32_t>(canvasContext.myCanvasStack.top());
+		canvasContext.myCanvases[key]->OnTransitionExit();
 	}
-	canvasContext.myCanvasStack.push(anID);
 
-
-	if (!aKeepRenderingPreviousCanvas && !canvasContext.myRenderStack.empty()) {
-		canvasContext.myRenderStack.pop();
-	}
-	canvasContext.myRenderStack.push(anID);
+	canvasContext.myCanvasStack.push(std::make_tuple(anID, aKeepUpdatingPreviousCanvas));
+	canvasContext.myRenderStack.push(std::make_tuple(anID, aKeepRenderingPreviousCanvas));
 
 	canvasContext.myCanvases[anID]->OnTransitionEnter();
 }
@@ -112,20 +107,27 @@ void si::Canvas::TransitionBack()
 		canvasContext.myRenderStack.pop();
 	}
 
+
 	if (!canvasContext.myCanvasStack.empty())
 	{
-		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
+		auto key = std::get<uint32_t>(canvasContext.myCanvasStack.top());
+		canvasContext.myCanvases[key]->OnTransitionExit();
 		canvasContext.myCanvasStack.pop();
 	}
 	if (!canvasContext.myCanvasStack.empty())
-		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionEnter();
+	{
+		auto key = std::get<uint32_t>(canvasContext.myCanvasStack.top());
+		canvasContext.myCanvases[key]->OnTransitionEnter();
+	}
+
 }
 
 void si::Canvas::ResetTo(const uint32_t anID)
 {
 	while (!canvasContext.myCanvasStack.empty())
 	{
-		canvasContext.myCanvases[canvasContext.myCanvasStack.top()]->OnTransitionExit();
+		auto key = std::get<uint32_t>(canvasContext.myCanvasStack.top());
+		canvasContext.myCanvases[key]->OnTransitionExit();
 		canvasContext.myCanvasStack.pop();
 	}
 
@@ -145,27 +147,34 @@ void si::Canvas::Init()
 void si::Canvas::Update(const float aDT)
 {
 	auto stack = canvasContext.myCanvasStack;
+	bool updateFlag = true;
 	while (!stack.empty())
 	{
 		auto index = stack.top();
 		stack.pop();
+		if (!updateFlag) continue;
 
-		canvasContext.myCanvases[index]->OnUpdate(aDT);
+		canvasContext.myCanvases[std::get<uint32_t>(index)]->OnUpdate(aDT);
+		updateFlag = std::get<bool>(index);
 	}
 }
 
 void si::Canvas::Render()
 {
 	auto stack = canvasContext.myRenderStack;
+	bool renderFlag = true;
 	while (!stack.empty())
 	{
 		auto index = stack.top();
 		stack.pop();
 
-		auto& elements = UI::GuiContent()[canvasContext.myCanvases[index]->GetID()];
+		if (!renderFlag) continue;
+		auto& elements = UI::GuiContent()[canvasContext.myCanvases[std::get<uint32_t>(index)]->GetID()];
 		for (auto& element : elements)
 		{
 			element->Render();
 		}
+		elements.clear();
+		renderFlag = std::get<bool>(index);
 	}
 }

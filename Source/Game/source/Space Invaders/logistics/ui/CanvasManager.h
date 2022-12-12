@@ -8,9 +8,10 @@
 #include <tge/math/vector2.h>
 #include <tge/math/color.h>
 
+#include "Space Invaders/logistics/ui/framework/UICanvas.h"
+
 namespace si
 {
-	class UICanvas;
 	class UIContent;
 
 
@@ -31,8 +32,8 @@ namespace si
 			template<typename Key>
 			friend uint32_t CalculateKey(const Key aKey);
 		private:
-			std::stack<uint32_t> myCanvasStack;
-			std::stack<uint32_t> myRenderStack;
+			std::stack<std::tuple<uint32_t, bool>> myCanvasStack;
+			std::stack<std::tuple<uint32_t, bool>> myRenderStack;
 			std::unordered_map<uint32_t, std::unique_ptr<UICanvas>> myCanvases;
 		};
 		inline CanvasContext canvasContext;
@@ -47,7 +48,7 @@ namespace si
 		}
 
 		template<typename Type>
-		void TransitionTo(const uint32_t anID, const bool aKeepUpdatingPreviousCanvas = false, const bool aKeepRenderingPreviousCanvas = false) {
+		void TransitionTo(const Type aType, const bool aKeepUpdatingPreviousCanvas = false, const bool aKeepRenderingPreviousCanvas = false) {
 			uint32_t key = Canvas::CalculateKey(aType);
 			Canvas::TransitionTo(key, aKeepUpdatingPreviousCanvas, aKeepRenderingPreviousCanvas);
 		}

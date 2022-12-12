@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <Space Invaders/actors/controllers/InputController.h>
 
 
 si::WaveManager::WaveManager()
@@ -95,6 +96,28 @@ void si::WaveManager::Update(const float /*aDT*/)
 	ourInstance->UpdateWave();
 }
 
+const bool si::WaveManager::IsGameOver()
+{
+	auto scene = SceneManager::GetCurrentScene();
+
+	if (!scene) return false;
+
+	if (!scene->Contains<InputController>()) return false;
+
+	auto player = scene->SearchForComponent<InputController>();
+	float yPos = player->GetEntity()->myTransform.Position().y;
+	for (auto& index : ourInstance->myCurrentWave)
+	{
+		auto ent = (*scene)[index];
+		if (ent->myTransform.Position().y <= yPos)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 const bool si::WaveManager::IsWaveDead()
 {
 	bool isWaveDead = myCurrentWave.empty();
@@ -121,7 +144,12 @@ void si::WaveManager::Start()
 
 void si::WaveManager::Reset()
 {
+
+	ourInstance->KillRestOfWaves();
+
 	ourInstance->myCurrentWaveIndex = 0;
+	ourInstance->myCanSpawnWavesFlag = false;
+	ourInstance->myWaveCount = 0;
 }
 
 
@@ -178,6 +206,17 @@ void si::WaveManager::SpawnWave()
 	}
 }
 
+void si::WaveManager::KillRestOfWaves()
+{
+	auto scene = SceneManager::GetCurrentScene();
+	for (auto& id : myCurrentWave)
+	{
+		scene->MarkForDelete(id);
+	}
+
+	myCurrentWave.clear();
+}
+
 
 
 void si::WaveManager::GetFurthestEnemiesOnEdges(Scene* const aScene)
@@ -189,7 +228,7 @@ void si::WaveManager::GetFurthestEnemiesOnEdges(Scene* const aScene)
 	for (auto& entityID : myCurrentWave)
 	{
 		auto entity = (*aScene)[entityID];
-
+		if (!entity) continue;
 		if (entity->myTransform.Position().x < minLeft)
 		{
 			minLeft = entity->myTransform.Position().x;

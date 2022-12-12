@@ -10,7 +10,7 @@ namespace si
 		SceneManager();
 	public:
 		static void RegisterScene(const std::string& aName, Scene* const aNewScene, const bool aRegisterAsUIFlag = false);
-		static void LoadScene(const std::string& aName);
+		static void LoadScene(const std::string& aName, const bool aFullLoadFlag = false);
 		static void Update(const float aDT);
 		static void Render();
 	public:

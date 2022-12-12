@@ -40,6 +40,7 @@ namespace si
 		Tga::Transform myTransform;
 		Sprite mySprite;
 		Scene* myCurrentScene;
+		const char* myName;
 	private:
 		uint32_t myUUID;
 		std::vector<std::shared_ptr<Component>> myComponents;

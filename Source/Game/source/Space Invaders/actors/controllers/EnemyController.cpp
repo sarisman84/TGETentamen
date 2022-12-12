@@ -6,14 +6,16 @@
 
 #include "../../logistics/ai/EnemyManager.h"
 #include "../../logistics/WeaponSystem.h"
+#include "../../logistics/collision/Collider.h"
 
 void si::EnemyController::Init()
 {
 	myActor = myEntity->GetComponent<EightBitActor>();
 	myHealthInteractor = myEntity->GetComponent<HealthInteractor>();
-	myGeneralBulletInfo.myOwnerID = myEntity->GetUUID();
+	
+	myGeneralBulletInfo.myCollisionLayer = static_cast<unsigned char>(Layer::Player);
 
-	myFireRate = 0.75f;
+	myFireRate = 3.00f;
 	myCurFireRate = myFireRate;
 }
 
@@ -37,6 +39,7 @@ void si::EnemyController::Update(const float aDT)
 		auto pos = myEntity->myTransform.Position();
 		myGeneralBulletInfo.myDirection = { 0.0f, -1.0f };
 		myGeneralBulletInfo.mySpawnPos = Tga::Vector2f(pos.x, pos.y) - Tga::Vector2f(0.0f, (myEntity->mySprite.mySize.y / 2.0f) + 50.0f);
+		myGeneralBulletInfo.myOwnerID = myEntity->GetUUID();
 		WeaponSystem::Fire(myEntity->myCurrentScene, myGeneralBulletInfo);
 		myCurFireRate = myFireRate;
 	}

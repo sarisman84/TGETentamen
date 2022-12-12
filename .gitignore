@@ -360,6 +360,11 @@ Bin/*.ilk
 Bin/Settings
 Bin/*.dll
 
+Build/
+Builds/
+build/
+builds/
+
 Temp/
 *.sln
 .vs

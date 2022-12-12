@@ -15,7 +15,7 @@ namespace si
 		Tga::Vector2f myPreviousPosition;
 		float myMovementSpeed;
 	private:
-		const float myPixelSizeOffset = 100.0f;
+		const float myPixelSizeOffset = 50.0f;
 		float myTempTimer;
 
 

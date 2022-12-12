@@ -1,83 +1,105 @@
 include "../../Premake/extensions.lua"
 
 workspace "Game"
-	location "../../"
-	startproject "Game"
-	architecture "x64"
+location "../../"
+startproject "Game"
+architecture "x64"
 
-	configurations {
-		"Debug",
-		"Release",
-		"Retail"
-	}
+configurations {
+    "Debug",
+    "Release",
+    "Retail"
+}
 
 -- include for common stuff 
 include "../../Premake/common.lua"
 
-include (dirs.external)
-include (dirs.engine)
-
+include(dirs.external)
+include(dirs.engine)
 
 -------------------------------------------------------------
 project "Game"
-	location (dirs.projectfiles)
-	dependson { "External", "Engine" }
-		
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
+location(dirs.projectfiles)
+dependson {
+    "External",
+    "Engine"
+}
 
-	debugdir "%{dirs.bin}"
-	targetdir ("%{dirs.bin}")
-	targetname("%{prj.name}_%{cfg.buildcfg}")
-	objdir ("%{dirs.temp}/%{prj.name}/%{cfg.buildcfg}")
+kind "ConsoleApp"
+language "C++"
+cppdialect "C++17"
 
-	links {"External", "Engine"}
+debugdir "%{dirs.bin}"
+targetdir("%{dirs.bin}")
+targetname("%{prj.name}_%{cfg.buildcfg}")
+objdir("%{dirs.temp}/%{prj.name}/%{cfg.buildcfg}")
 
-	includedirs { dirs.external, dirs.engine }
+links {
+    "External",
+    "Engine"
+}
 
-	files {
-		"source/**.h",
-		"source/**.cpp",
-	}
+includedirs {
+    "source",
+    dirs.external,
+    dirs.engine
+}
 
-	libdirs { dirs.lib, dirs.dependencies }
+files {
+    "source/**.h",
+    "source/**.cpp"
+}
 
-	verify_or_create_settings("Game")
-	
-	filter "configurations:Debug"
-		defines {"_DEBUG"}
-		runtime "Debug"
-		symbols "on"
-		files {"tools/**"}
-		includedirs {"tools/"}
-	filter "configurations:Release"
-		defines "_RELEASE"
-		runtime "Release"
-		optimize "on"
-		files {"tools/**"}
-		includedirs {"tools/"}
-	filter "configurations:Retail"
-		defines "_RETAIL"
-		runtime "Release"
-		optimize "on"
+libdirs {
+    dirs.lib,
+    dirs.dependencies
+}
 
-	filter "system:windows"
+verify_or_create_settings("Game")
+
+filter "configurations:Debug"
+defines {
+    "_DEBUG"
+}
+runtime "Debug"
+symbols "on"
+files {
+    "tools/**"
+}
+includedirs {
+    "tools/"
+}
+filter "configurations:Release"
+defines "_RELEASE"
+runtime "Release"
+optimize "on"
+files {
+    "tools/**"
+}
+includedirs {
+    "tools/"
+}
+filter "configurations:Retail"
+defines "_RETAIL"
+runtime "Release"
+optimize "on"
+
+filter "system:windows"
 --		kind "StaticLib"
-		staticruntime "off"
-		symbols "On"		
-		systemversion "latest"
-		warnings "Extra"
-		--conformanceMode "On"
-		--buildoptions { "/permissive" }
-		flags { 
-		--	"FatalWarnings", -- would be both compile and lib, the original didn't set lib
-			"FatalCompileWarnings",
-			"MultiProcessorCompile"
-		}
-		
-		defines {
-			"WIN32",
-			"_LIB", 
-			"TGE_SYSTEM_WINDOWS" 
-		}
+staticruntime "off"
+symbols "On"
+systemversion "latest"
+warnings "Extra"
+-- conformanceMode "On"
+-- buildoptions { "/permissive" }
+flags {
+    --	"FatalWarnings", -- would be both compile and lib, the original didn't set lib
+    "FatalCompileWarnings",
+    "MultiProcessorCompile"
+}
+
+defines {
+    "WIN32",
+    "_LIB",
+    "TGE_SYSTEM_WINDOWS"
+}

@@ -24,9 +24,10 @@ namespace si
 	public:
 		void Awake() override;
 		void Update(const float aDT) override;
-	public:
+	public: //Getters and setters
 		inline const int GetCurrentAmmo() { return myCurrentMagazine; }
 		inline const bool IsReloading() { return myReloadFlag; }
+		inline Entity* const GetEntity() { return myEntity; }
 	private: //Movement
 		EightBitActor* myEightBitActor;
 		Actor* myActor;

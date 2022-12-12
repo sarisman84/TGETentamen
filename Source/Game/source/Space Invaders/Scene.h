@@ -35,14 +35,19 @@ namespace si
 
 		void MarkForDelete(const uint32_t anUUID);
 		void ClearGarbage();
-
+		void OnUnload();
 
 		template<typename Type>
 		Type* SearchForComponent();
 
+		template<typename Type>
+		const bool Contains();
+
 	public: //State Managemnet
 		const bool IsActive() const;
 		void SetActive(const bool aNewState);
+		void SetUpdateActive(const bool aNewState);
+		void SetRenderActive(const bool aNewState);
 	public: //Accessors
 		std::unordered_map<uint32_t, Collider*>& GetColliders() { return myColliders; }
 	private:
@@ -59,7 +64,8 @@ namespace si
 		Tga::SpriteDrawer* myRenderer;
 		Tga::Engine* myEngine;
 	private: //Other
-		bool myActiveState;
+		bool myUpdateState;
+		bool myRenderState;
 	};
 
 	template<typename Type>
@@ -71,5 +77,15 @@ namespace si
 				return comp;
 		}
 		return nullptr;
+	}
+	template<typename Type>
+	inline const bool Scene::Contains()
+	{
+		for (auto& entity : myEntities)
+		{
+			if (entity.second->GetComponent<Type>())
+				return true;
+		}
+		return false;
 	}
 }

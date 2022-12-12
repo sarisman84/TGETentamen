@@ -8,11 +8,10 @@
 
 #include "Space Invaders/logistics/ui/CanvasManager.h"
 #include "Space Invaders/logistics/ui/canvases/InGameHUD.h"
-
-enum class CanvasTypes
-{
-	MainMenu, PauseMenu, InGameHUD
-};
+#include "Space Invaders/logistics/ui/canvases/GameOver.h"
+#include "Space Invaders/logistics/ui/canvases/MainMenu.h"
+#include "Space Invaders/logistics/ui/canvases/PauseMenu.h"
+#include "Space Invaders/logistics/ui/canvases/CanvasTypes.h"
 
 
 GameWorld::GameWorld()
@@ -28,15 +27,20 @@ void GameWorld::Init()
 	si::Canvas::Init();
 
 	si::Canvas::RegisterCanvas(CanvasTypes::InGameHUD, new si::InGameHUD());
-	si::Canvas::ResetTo(CanvasTypes::InGameHUD);
+	si::Canvas::RegisterCanvas(CanvasTypes::MainMenu, new si::MainMenu());
+	si::Canvas::RegisterCanvas(CanvasTypes::PauseMenu, new si::PauseMenu());
+	si::Canvas::RegisterCanvas(CanvasTypes::GameOver, new si::GameOver());
+	si::Canvas::ResetTo(CanvasTypes::MainMenu);
 
-	//Load scene and waves + set some settings
-	si::SceneManager::LoadScene("playground.json");
 	si::WaveManager::LoadWaves("Data/Waves/testWave.json");
-	si::WaveManager::InfiniteWaves() = true;
 
-	//Start the game
-	si::WaveManager::Start();
+	////Load scene and waves + set some settings
+	//si::SceneManager::LoadScene("playground.json");
+	//
+	//si::WaveManager::InfiniteWaves() = true;
+
+	////Start the game
+	//si::WaveManager::Start();
 }
 void GameWorld::Update(float aTimeDelta)
 {
@@ -45,6 +49,13 @@ void GameWorld::Update(float aTimeDelta)
 	si::WaveManager::Update(aTimeDelta);
 
 	si::Canvas::Update(aTimeDelta);
+
+	if (si::WaveManager::IsGameOver())
+	{
+		si::WaveManager::Reset();
+		si::SceneManager::LoadScene("mainMenu.json");
+		si::Canvas::ResetTo(CanvasTypes::GameOver);
+	}
 }
 
 void GameWorld::Render()

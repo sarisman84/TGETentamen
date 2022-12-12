@@ -11,7 +11,7 @@ namespace si
 	public:
 		void Awake() override;
 		void Update(const float aDT) override;
-	public:
+	public: //Setters and getters
 		void SetDirection(const Tga::Vector2f& aDirection);
 		void SetVelocity(const float aVelocity);
 		inline Collider* const GetCollider() { return myCollider; }
