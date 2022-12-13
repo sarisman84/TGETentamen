@@ -77,7 +77,7 @@ std::unordered_map<std::string, uint32_t> si::ScoreSystem::LoadHightscoresImpl()
 	const std::string file = myDataPath + "highscore.json";
 
 	std::ifstream highscoreIfs(file);
-	if (!highscoreIfs.good()) 
+	if (!highscoreIfs.good())
 	{
 		ERROR_LOG("File " + file + " was not found in " + myDataPath + ".");
 		return std::unordered_map<std::string, uint32_t>();

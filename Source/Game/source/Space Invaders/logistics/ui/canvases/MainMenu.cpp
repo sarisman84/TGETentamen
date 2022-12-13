@@ -14,6 +14,7 @@
 void si::MainMenu::OnTransitionEnter()
 {
 	SceneManager::LoadScene("mainMenu.json");
+	myData = ScoreSystem::LoadHighScores();
 }
 
 void si::MainMenu::OnUpdate(const float /*aDT*/)
@@ -24,6 +25,15 @@ void si::MainMenu::OnUpdate(const float /*aDT*/)
 	UI::Text("Space Invaders", pos);
 	pos.y -= 100.0f;
 	UI::Text("Press Space to Start", pos);
+	pos.y = screenSize.y / 2.0f;
+	pos.x += 200.0f;
+	
+	for (auto& d : myData)
+	{
+		UI::Text(d.first + " - " + std::to_string(d.second), pos);
+		pos.y -= 50.0f;
+	}
+
 	UI::End();
 
 	if (GetAsyncKeyState(VK_SPACE))
