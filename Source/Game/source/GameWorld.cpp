@@ -12,6 +12,7 @@
 #include "Space Invaders/logistics/ui/canvases/MainMenu.h"
 #include "Space Invaders/logistics/ui/canvases/PauseMenu.h"
 #include "Space Invaders/logistics/ui/canvases/CanvasTypes.h"
+#include "Space Invaders/logistics/ui/canvases/SaveScore.h"
 
 
 GameWorld::GameWorld()
@@ -29,7 +30,7 @@ void GameWorld::Init()
 	si::Canvas::RegisterCanvas(CanvasTypes::InGameHUD, new si::InGameHUD());
 	si::Canvas::RegisterCanvas(CanvasTypes::MainMenu, new si::MainMenu());
 	si::Canvas::RegisterCanvas(CanvasTypes::PauseMenu, new si::PauseMenu());
-	si::Canvas::RegisterCanvas(CanvasTypes::GameOver, new si::GameOver());
+	si::Canvas::RegisterCanvas(CanvasTypes::SaveScore, new si::SaveScore());
 	si::Canvas::ResetTo(CanvasTypes::MainMenu);
 
 	si::WaveManager::LoadWaves("Data/Waves/testWave.json");

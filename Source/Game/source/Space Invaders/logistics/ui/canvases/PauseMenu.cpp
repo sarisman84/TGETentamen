@@ -38,7 +38,7 @@ void si::PauseMenu::OnUpdate(const float aDT)
 	myCurDelay -= aDT;
 	if (myCurDelay > 0) return;
 
-	if (GetAsyncKeyState(resumeBind) && myInputDelayTrigger)
+	if (GetAsyncKeyState(resumeBind) && !myInputDelayTrigger)
 	{
 		Canvas::TransitionBack();
 		scene->SetUpdateActive(true);
@@ -49,6 +49,7 @@ void si::PauseMenu::OnUpdate(const float aDT)
 		scene->SetUpdateActive(true);
 		WaveManager::Reset();
 		Canvas::ResetTo(CanvasTypes::MainMenu);
+		Canvas::TransitionTo(CanvasTypes::SaveScore);
 		myInputDelayTrigger = true;
 	}
 }

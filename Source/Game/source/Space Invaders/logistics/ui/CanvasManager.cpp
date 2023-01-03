@@ -33,7 +33,7 @@ namespace si
 			imguiContext.myCurrentCanvasID = aCanvasPtr->GetID();
 			imguiContext.myLocalID = 0;
 		}
-		void Text(std::string someText, Tga::Vector2f aPosition, Tga::Color aColor)
+		void Text(std::string someText, Tga::Vector2f aPosition, const float aSize, Tga::Color aColor)
 		{
 			//If this is called in an non-canvas enviroment, exit
 			if (imguiContext.myCurrentCanvasID == UINT32_MAX)
@@ -55,6 +55,7 @@ namespace si
 			textInt->SetColor(aColor);
 			textInt->SetPosition(aPosition);
 			textInt->SetText(someText);
+			textInt->SetScale(aSize);
 
 			imguiContext.myLocalID++;
 		}

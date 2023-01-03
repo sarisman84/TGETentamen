@@ -51,10 +51,12 @@ void si::ScoreSystem::SaveScoreImpl(const std::string& aName)
 	{
 		data = json::parse(highscoreIfs);
 	}
-	else
+	if (data.empty())
 	{
 		data = json::array();
 	}
+
+
 
 	//Parse the data as its own object, then store that object into an array in the json file
 	json entry = json::object();

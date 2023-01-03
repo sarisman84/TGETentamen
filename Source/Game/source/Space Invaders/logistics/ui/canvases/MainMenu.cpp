@@ -19,20 +19,35 @@ void si::MainMenu::OnTransitionEnter()
 
 void si::MainMenu::OnUpdate(const float /*aDT*/)
 {
+
 	UI::Begin(this);
 	auto screenSize = UI::GetViewSize();
-	auto pos = Tga::Vector2f(screenSize.x / 2.0f, screenSize.y / 2.0f);
-	UI::Text("Space Invaders", pos);
-	pos.y -= 100.0f;
-	UI::Text("Press Space to Start", pos);
-	pos.y = screenSize.y / 2.0f;
-	pos.x += 200.0f;
-	
+
+	const Tga::Vector2f center = { screenSize.x / 2.0f, screenSize.y / 2.0f };
+
+	auto highscorePos = center;
+	auto titlePos = center;
+	auto authorPos = center - Tga::Vector2f{ 475.0f, 475.0f };
+	titlePos.x -= 150.0f;
+	UI::Text("Spyro's Space Invaders", titlePos, 1.5f);
+
+	auto enterDialogPos = titlePos;
+	enterDialogPos.y -= 200.0f;
+	enterDialogPos.x += 10.0f;
+	UI::Text("Press Space to Start", enterDialogPos);
+
+
+	highscorePos.x += 350.0f;
+	UI::Text("---Highscores--", highscorePos);
+	highscorePos.y -= 75.0f;
 	for (auto& d : myData)
 	{
-		UI::Text(d.first + " - " + std::to_string(d.second), pos);
-		pos.y -= 50.0f;
+		UI::Text(d.first + " - " + std::to_string(d.second), highscorePos);
+		highscorePos.y -= 50.0f;
 	}
+
+
+	UI::Text("Made by Spyridon Passas (SP21)", authorPos);
 
 	UI::End();
 

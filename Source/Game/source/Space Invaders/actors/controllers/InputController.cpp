@@ -29,7 +29,8 @@ void si::InputController::Awake()
 	{
 		WaveManager::Reset();
 		SceneManager::LoadScene("mainMenu.json");
-		Canvas::ResetTo(CanvasTypes::GameOver);
+		Canvas::ResetTo(CanvasTypes::MainMenu);
+		Canvas::TransitionTo(CanvasTypes::SaveScore);
 	};
 
 	hi.SetHealth(3);

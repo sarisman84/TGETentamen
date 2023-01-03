@@ -2,6 +2,6 @@
 
 enum class CanvasTypes
 {
-	MainMenu, PauseMenu, InGameHUD, GameOver
+	MainMenu, PauseMenu, InGameHUD, GameOver, SaveScore
 };
 

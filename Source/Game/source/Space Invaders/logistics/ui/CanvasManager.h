@@ -84,7 +84,7 @@ namespace si
 			uint32_t myLocalID;
 		private://Friends <3
 			friend void Begin(UICanvas* const aCanvasPtr);
-			friend void Text(std::string someText, Tga::Vector2f aPosition, Tga::Color aColor = Tga::Color(1, 1, 1, 1));
+			friend void Text(std::string someText, Tga::Vector2f aPosition, const float aSize = 1.0f, Tga::Color aColor = Tga::Color(0, 1, 1, 1));
 			friend void End();
 			friend void Init();
 		private: //Getters/Setters
